@@ -3,941 +3,1466 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BabyTrack — Blob Tracking VFX</title>
+<title>BabyTrack — Blob Tracking Visual Effects</title>
 <style>
 /* ── Reset & Base ─────────────────────────────────────────────────────── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { height: 100%; overflow: hidden; background: #0a0a0a; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+html, body {
+  height: 100%; overflow: hidden;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+}
+body.dark { background: #0a0a0a; color: #e0e0e0; }
+body.light { background: #f0f0f0; color: #1a1a1a; }
 
-/* ── Layout ───────────────────────────────────────────────────────────── */
+/* ── App Layout ───────────────────────────────────────────────────────── */
 #app { display: flex; height: 100vh; width: 100vw; }
 
 /* ── Sidebar ──────────────────────────────────────────────────────────── */
 #sidebar {
-  width: 280px; min-width: 280px; height: 100vh; overflow-y: auto;
-  background: rgba(20, 20, 30, 0.85);
-  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-  border-right: 1px solid rgba(255,255,255,0.08);
-  padding: 20px 16px; display: flex; flex-direction: column; gap: 18px;
+  width: 320px; min-width: 320px; height: 100vh;
+  overflow-y: auto; overflow-x: hidden;
+  display: flex; flex-direction: column;
   z-index: 10;
 }
+body.dark #sidebar { background: #0e0e0e; border-right: 1px solid #1a1a1a; }
+body.light #sidebar { background: #e8e8e8; border-right: 1px solid #ccc; }
 #sidebar::-webkit-scrollbar { width: 4px; }
-#sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+#sidebar::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
-#sidebar h1 { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
-#sidebar h1 span { color: #7b6ff0; }
-
-.section { display: flex; flex-direction: column; gap: 8px; }
-.section-title {
-  font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px;
-  color: rgba(255,255,255,0.35); font-weight: 600;
+/* ── Sidebar Header ───────────────────────────────────────────────────── */
+.sidebar-header { padding: 12px 14px 0 14px; display: flex; flex-direction: column; gap: 8px; }
+.logo-row { display: flex; align-items: center; justify-content: space-between; }
+.logo {
+  font-family: 'Courier New', monospace;
+  font-size: 17px; font-weight: 900;
+  letter-spacing: 2px;
 }
+body.dark .logo { color: #fff; }
+body.light .logo { color: #111; }
+.nav-links { display: flex; gap: 10px; }
+.nav-links a {
+  font-size: 10px; text-decoration: none;
+  letter-spacing: 0.5px; font-weight: 500;
+  transition: color 0.2s;
+}
+body.dark .nav-links a { color: #666; }
+body.light .nav-links a { color: #888; }
+.nav-links a:hover { color: #fff; }
+.notif-bar {
+  font-size: 10px; padding: 5px 10px;
+  border-radius: 4px; text-align: center; cursor: pointer;
+}
+body.dark .notif-bar { background: #1a1a2e; color: #7b7bff; }
+body.light .notif-bar { background: #d0d0ff; color: #3333aa; }
 
 /* ── Controls ─────────────────────────────────────────────────────────── */
-label { font-size: 12px; color: rgba(255,255,255,0.7); display: flex; justify-content: space-between; align-items: center; }
-label .val { font-variant-numeric: tabular-nums; color: rgba(255,255,255,0.45); font-size: 11px; }
+.controls { padding: 10px 14px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.section { display: flex; flex-direction: column; gap: 5px; }
+.section-label {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding-bottom: 3px;
+  margin-bottom: 2px;
+}
+body.dark .section-label { color: #555; border-bottom: 1px solid #1a1a1a; }
+body.light .section-label { color: #999; border-bottom: 1px solid #ccc; }
 
-select, input[type=range] { width: 100%; }
+.btn-row { display: flex; gap: 4px; flex-wrap: wrap; }
+.btn {
+  padding: 5px 10px; border: none; border-radius: 4px;
+  font-size: 11px; font-weight: 600; cursor: pointer;
+  transition: all 0.15s; font-family: inherit;
+}
+body.dark .btn { background: #1a1a1a; color: #ccc; }
+body.light .btn { background: #d5d5d5; color: #333; }
+.btn:hover { opacity: 0.85; }
+.btn.active { background: #4a4aff; color: #fff; }
+.btn.primary { background: #3a3aee; color: #fff; }
+.btn.primary:hover { background: #5050ff; }
+.btn.danger { background: #cc3333; color: #fff; }
+
+.btn-sm { padding: 3px 7px; font-size: 10px; }
+
+input[type="range"] { width: 100%; accent-color: #4a4aff; }
+input[type="color"] {
+  width: 36px; height: 24px; border: none;
+  border-radius: 4px; cursor: pointer; background: none;
+}
+
+.toggle-row {
+  display: flex; align-items: center; gap: 8px; font-size: 11px;
+}
+.toggle-row input[type="checkbox"] { accent-color: #4a4aff; }
 
 select {
-  appearance: none; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 6px; padding: 7px 10px; color: #e0e0e0; font-size: 13px; cursor: pointer;
+  padding: 4px 8px; border-radius: 4px; font-size: 11px;
+  font-family: inherit; cursor: pointer;
 }
-select:focus { outline: none; border-color: #7b6ff0; }
+body.dark select { background: #1a1a1a; color: #ccc; border: 1px solid #333; }
+body.light select { background: #ddd; color: #333; border: 1px solid #bbb; }
 
-input[type=range] {
-  -webkit-appearance: none; height: 4px; border-radius: 2px;
-  background: rgba(255,255,255,0.12); outline: none; cursor: pointer;
+/* ── Main Area ────────────────────────────────────────────────────────── */
+#main {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
 }
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
-  background: #7b6ff0; border: 2px solid #1a1a2e;
-}
+body.dark #main { background: #050505; }
+body.light #main { background: #e0e0e0; }
 
-/* Palette buttons */
-.palette-row { display: flex; gap: 6px; flex-wrap: wrap; }
-.palette-btn {
-  width: 36px; height: 24px; border-radius: 5px; border: 2px solid transparent;
-  cursor: pointer; transition: border-color 0.15s;
+#display-canvas {
+  max-width: 100%; max-height: 100%;
+  display: block;
 }
-.palette-btn.active, .palette-btn:hover { border-color: #fff; }
+#placeholder {
+  text-align: center; color: #444; font-size: 14px;
+}
+#placeholder h2 { font-size: 18px; margin-bottom: 8px; color: #666; }
 
-/* Toggle switch */
-.toggle-row { display: flex; justify-content: space-between; align-items: center; }
-.toggle-row span { font-size: 12px; color: rgba(255,255,255,0.7); }
-.toggle { position: relative; width: 38px; height: 20px; cursor: pointer; }
-.toggle input { display: none; }
-.toggle .slider {
-  position: absolute; inset: 0; background: rgba(255,255,255,0.12);
-  border-radius: 10px; transition: background 0.2s;
-}
-.toggle .slider::after {
-  content: ''; position: absolute; width: 16px; height: 16px; border-radius: 50%;
-  background: #e0e0e0; top: 2px; left: 2px; transition: transform 0.2s;
-}
-.toggle input:checked + .slider { background: #7b6ff0; }
-.toggle input:checked + .slider::after { transform: translateX(18px); }
-
-/* Action buttons */
-.btn-row { display: flex; gap: 8px; }
-.btn {
-  flex: 1; padding: 8px 0; border: none; border-radius: 6px; font-size: 12px;
-  font-weight: 600; cursor: pointer; transition: background 0.15s;
-}
-.btn-primary { background: #7b6ff0; color: #fff; }
-.btn-primary:hover { background: #6a5de0; }
-.btn-danger { background: #e04060; color: #fff; }
-.btn-danger:hover { background: #d03050; }
-.btn-secondary { background: rgba(255,255,255,0.08); color: #e0e0e0; }
-.btn-secondary:hover { background: rgba(255,255,255,0.14); }
-
-/* FPS counter */
-#fps {
-  font-size: 11px; font-variant-numeric: tabular-nums;
-  color: rgba(255,255,255,0.35); text-align: center; margin-top: auto; padding-top: 10px;
-}
-
-/* ── Canvas area ──────────────────────────────────────────────────────── */
-#canvas-wrap { flex: 1; position: relative; background: #000; overflow: hidden; }
-#mainCanvas { display: block; width: 100%; height: 100%; }
-#webcamVideo { display: none; }
-
-/* ── Responsive ───────────────────────────────────────────────────────── */
-@media (max-width: 640px) {
-  #app { flex-direction: column; }
-  #sidebar { width: 100%; min-width: 0; height: auto; max-height: 45vh; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.08); }
-}
+/* Hidden elements */
+.hidden { display: none !important; }
+video, #offscreen, #filterCanvas { display: none; }
 </style>
 </head>
-<body>
+<body class="dark">
 <div id="app">
-
 <!-- ── Sidebar ──────────────────────────────────────────────────────── -->
 <div id="sidebar">
-  <h1><span>Baby</span>Track</h1>
-
-  <!-- Detection mode -->
-  <div class="section">
-    <div class="section-title">Detection Mode</div>
-    <select id="detectionMode">
-      <option value="brightness">Brightness Threshold</option>
-      <option value="darkness">Darkness Threshold</option>
-      <option value="motion">Motion Detection</option>
-    </select>
+  <div class="sidebar-header">
+    <div class="logo-row">
+      <span class="logo">BABYTRACK</span>
+      <div class="nav-links">
+        <a href="#">Membership</a>
+        <a href="#">Contact</a>
+        <a href="#">Tips</a>
+      </div>
+    </div>
+    <div class="notif-bar">Try ImageTrack (Image Version) →</div>
   </div>
 
-  <!-- Threshold -->
-  <div class="section">
-    <label>Threshold <span class="val" id="thresholdVal">128</span></label>
-    <input type="range" id="threshold" min="10" max="250" value="128">
-  </div>
+  <div class="controls">
+    <!-- Core Actions -->
+    <div class="section">
+      <div class="section-label">Actions</div>
+      <div class="btn-row">
+        <button class="btn primary" onclick="uploadVideo()">Upload Video</button>
+        <button class="btn primary" onclick="openCamera()">Open Camera</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="exportVideo('mp4')">Export MP4</button>
+        <button class="btn" onclick="exportVideo('webm')">Export WebM</button>
+        <div class="toggle-row" style="margin-left:6px;">
+          <input type="checkbox" id="hqExport"><label for="hqExport">HQ</label>
+        </div>
+      </div>
+    </div>
 
-  <!-- Min blob size -->
-  <div class="section">
-    <label>Min Blob Size <span class="val" id="minBlobVal">200</span></label>
-    <input type="range" id="minBlobSize" min="20" max="2000" value="200">
-  </div>
+    <!-- Speed & Performance -->
+    <div class="section">
+      <div class="section-label">Playback</div>
+      <div class="btn-row">
+        <span style="font-size:10px;color:#888;margin-right:4px;">Speed:</span>
+        <button class="btn btn-sm active" onclick="setSpeed(1,this)">1x</button>
+        <button class="btn btn-sm" onclick="setSpeed(2,this)">2x</button>
+        <button class="btn btn-sm" onclick="setSpeed(3,this)">3x</button>
+        <button class="btn btn-sm" onclick="setSpeed(4,this)">4x</button>
+      </div>
+      <div class="toggle-row">
+        <span style="font-size:10px;color:#888;">Performance:</span>
+        <input type="range" id="perfSlider" min="0" max="4" value="0" style="width:100px;"
+          oninput="state.frameSkip=+this.value; document.getElementById('perfLabel').textContent=this.value==0?'No Skip':'Skip '+this.value">
+        <span id="perfLabel" style="font-size:10px;">No Skip</span>
+      </div>
+    </div>
 
-  <!-- Effect selector -->
-  <div class="section">
-    <div class="section-title">Visual Effect</div>
-    <select id="effectMode">
-      <option value="particles">Particles</option>
-      <option value="ripple">Ripple</option>
-      <option value="trails">Trails</option>
-      <option value="magnetic">Magnetic Lines</option>
-      <option value="noise">Noise Field</option>
-    </select>
-  </div>
+    <!-- Blob Count & Size -->
+    <div class="section">
+      <div class="section-label">Blob Size & Count</div>
+      <div class="toggle-row">
+        <input type="checkbox" id="sameSize" onchange="state.sameSize=this.checked">
+        <label for="sameSize">Same Size</label>
+      </div>
+      <div class="btn-row">
+        <span style="font-size:10px;color:#888;margin-right:2px;">BBox:</span>
+        <button class="btn btn-sm" onclick="setBBox(0,this)">0</button>
+        <button class="btn btn-sm" onclick="setBBox(32,this)">32</button>
+        <button class="btn btn-sm active" onclick="setBBox(64,this)">64</button>
+        <button class="btn btn-sm" onclick="setBBox(128,this)">128</button>
+        <button class="btn btn-sm" onclick="setBBox(256,this)">256</button>
+        <button class="btn btn-sm" onclick="setBBox(512,this)">512</button>
+      </div>
+      <div class="btn-row">
+        <span style="font-size:10px;color:#888;margin-right:2px;">Mode:</span>
+        <button class="btn btn-sm active" id="modeSize" onclick="state.countMode='size';activate(this,'modeCount')">By Size</button>
+        <button class="btn btn-sm" id="modeCount" onclick="state.countMode='count';activate(this,'modeSize')">By Count</button>
+      </div>
+      <div class="btn-row">
+        <span style="font-size:10px;color:#888;margin-right:2px;">Count:</span>
+        <button class="btn btn-sm" onclick="setCount(16,this)">16</button>
+        <button class="btn btn-sm active" onclick="setCount(32,this)">32</button>
+        <button class="btn btn-sm" onclick="setCount(64,this)">64</button>
+        <button class="btn btn-sm" onclick="setCount(128,this)">128</button>
+        <button class="btn btn-sm" onclick="setCount(256,this)">256</button>
+        <button class="btn btn-sm" onclick="setCount(512,this)">512</button>
+      </div>
+    </div>
 
-  <!-- Palette -->
-  <div class="section">
-    <div class="section-title">Color Palette</div>
-    <div class="palette-row" id="paletteRow"></div>
-  </div>
+    <!-- Shape & Region -->
+    <div class="section">
+      <div class="section-label">Shape & Region</div>
+      <div class="btn-row">
+        <button class="btn btn-sm active" onclick="setShape('square',this)">Square</button>
+        <button class="btn btn-sm" onclick="setShape('circle',this)">Circle</button>
+        <button class="btn btn-sm" onclick="setShape('rounded',this)">Rounded</button>
+      </div>
+      <div class="btn-row">
+        <span style="font-size:10px;color:#888;margin-right:2px;">Region:</span>
+        <select id="regionSelect" onchange="state.region=this.value">
+          <option value="box">Box</option>
+          <option value="fill">Fill</option>
+          <option value="outline">Outline</option>
+        </select>
+        <div class="toggle-row" style="margin-left:6px;">
+          <input type="checkbox" id="randomRegion" onchange="state.randomRegion=this.checked">
+          <label for="randomRegion">Random</label>
+        </div>
+      </div>
+    </div>
 
-  <!-- Intensity -->
-  <div class="section">
-    <label>Intensity <span class="val" id="intensityVal">0.70</span></label>
-    <input type="range" id="intensity" min="0" max="100" value="70">
-  </div>
+    <!-- Basic Effects -->
+    <div class="section">
+      <div class="section-label">Basic Effects</div>
+      <div class="btn-row">
+        <button class="btn btn-sm active" onclick="setEffect('basic',this)">Basic</button>
+        <button class="btn btn-sm" onclick="setEffect('label',this)">Label</button>
+        <button class="btn btn-sm" onclick="setEffect('frame',this)">Frame</button>
+        <button class="btn btn-sm" onclick="setEffect('lframe',this)">L-Frame</button>
+        <button class="btn btn-sm" onclick="setEffect('xframe',this)">X-Frame</button>
+        <button class="btn btn-sm" onclick="setEffect('grid',this)">Grid</button>
+        <button class="btn btn-sm" onclick="setEffect('particle',this)">Particle</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-sm" onclick="setEffect('dash',this)">Dash</button>
+        <button class="btn btn-sm" onclick="setEffect('scope',this)">Scope</button>
+        <button class="btn btn-sm" onclick="setEffect('win2k',this)">Win2K</button>
+        <button class="btn btn-sm" onclick="setEffect('label2',this)">Label2</button>
+        <button class="btn btn-sm" onclick="setEffect('glow',this)">Glow</button>
+        <button class="btn btn-sm" onclick="setEffect('backdrop',this)">Backdrop</button>
+      </div>
+    </div>
 
-  <!-- Speed -->
-  <div class="section">
-    <label>Speed <span class="val" id="speedVal">0.60</span></label>
-    <input type="range" id="speed" min="0" max="100" value="60">
-  </div>
+    <!-- Filter Effects -->
+    <div class="section">
+      <div class="section-label">Filter Effects</div>
+      <div class="btn-row">
+        <button class="btn btn-sm" onclick="toggleFilter('invert',this)">Invert</button>
+        <button class="btn btn-sm" onclick="toggleFilter('fusion',this)">Fusion</button>
+        <button class="btn btn-sm" onclick="toggleFilter('glitch',this)">Glitch</button>
+        <button class="btn btn-sm" onclick="toggleFilter('thermal',this)">Thermal</button>
+        <button class="btn btn-sm" onclick="toggleFilter('pixel',this)">Pixel</button>
+        <button class="btn btn-sm" onclick="toggleFilter('tone',this)">Tone</button>
+        <button class="btn btn-sm" onclick="toggleFilter('blur',this)">Blur</button>
+        <button class="btn btn-sm" onclick="toggleFilter('dither',this)">Dither</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-sm" onclick="toggleFilter('zoom',this)">Zoom</button>
+        <button class="btn btn-sm" onclick="toggleFilter('xray',this)">X-Ray</button>
+        <button class="btn btn-sm" onclick="toggleFilter('water',this)">Water</button>
+        <button class="btn btn-sm" onclick="toggleFilter('mask',this)">Mask</button>
+        <button class="btn btn-sm" onclick="toggleFilter('crt',this)">CRT</button>
+        <button class="btn btn-sm" onclick="toggleFilter('edge',this)">Edge</button>
+        <button class="btn btn-sm" onclick="toggleFilter('blink',this)">Blink</button>
+      </div>
+    </div>
 
-  <!-- Show webcam -->
-  <div class="section">
-    <div class="toggle-row">
-      <span>Show Webcam</span>
-      <label class="toggle"><input type="checkbox" id="showWebcam"><div class="slider"></div></label>
+    <!-- Connection System -->
+    <div class="section">
+      <div class="section-label">Connections</div>
+      <div class="btn-row">
+        <button class="btn btn-sm" id="connOff" onclick="setConn('off',this)">Off</button>
+        <button class="btn btn-sm" id="connMesh" onclick="setConn('mesh',this)">Connection</button>
+        <button class="btn btn-sm" id="connHub" onclick="setConn('hub',this)">Center Hub</button>
+      </div>
+      <div class="btn-row">
+        <span style="font-size:10px;color:#888;">Line:</span>
+        <button class="btn btn-sm active" onclick="state.connDash=false;activate(this)">Solid</button>
+        <button class="btn btn-sm" onclick="state.connDash=true;activate(this)">Dashed</button>
+      </div>
+      <div class="btn-row">
+        <span style="font-size:10px;color:#888;">Rate:</span>
+        <button class="btn btn-sm" onclick="setConnRate(0,this)">0</button>
+        <button class="btn btn-sm" onclick="setConnRate(0.25,this)">0.25</button>
+        <button class="btn btn-sm active" onclick="setConnRate(0.5,this)">0.5</button>
+        <button class="btn btn-sm" onclick="setConnRate(0.75,this)">0.75</button>
+        <button class="btn btn-sm" onclick="setConnRate(1,this)">1</button>
+      </div>
+      <div class="btn-row">
+        <span style="font-size:10px;color:#888;">Width:</span>
+        <button class="btn btn-sm active" onclick="state.connWidth=1;activate(this)">1px</button>
+        <button class="btn btn-sm" onclick="state.connWidth=2;activate(this)">2px</button>
+        <button class="btn btn-sm" onclick="state.connWidth=3;activate(this)">3px</button>
+      </div>
+    </div>
+
+    <!-- Audio -->
+    <div class="section">
+      <div class="section-label">Audio</div>
+      <div class="btn-row">
+        <select id="audioSelect" onchange="setAudio(this.value)">
+          <option value="none">None</option>
+          <option value="computer">Computer (Mic)</option>
+          <option value="beep">Beep</option>
+          <option value="bird">Bird</option>
+        </select>
+        <button class="btn btn-sm" onclick="uploadAudio()">Upload Audio</button>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" id="singleTrack" onchange="state.singleTracking=this.checked">
+        <label for="singleTrack">Single Tracking</label>
+      </div>
+    </div>
+
+    <!-- Color & Text -->
+    <div class="section">
+      <div class="section-label">Color & Text</div>
+      <div class="btn-row">
+        <input type="color" id="colorPicker" value="#00ff88" onchange="state.color=this.value">
+        <div class="toggle-row">
+          <input type="checkbox" id="sepColors" onchange="state.separateColors=this.checked">
+          <label for="sepColors">Separate</label>
+        </div>
+        <div class="toggle-row">
+          <input type="checkbox" id="crazyColors" onchange="state.crazy=this.checked">
+          <label for="crazyColors">Crazy</label>
+        </div>
+      </div>
+      <div class="btn-row">
+        <div class="toggle-row">
+          <input type="checkbox" id="showText" onchange="state.showText=this.checked" checked>
+          <label for="showText">Text</label>
+        </div>
+        <select id="textPos" onchange="state.textPosition=this.value">
+          <option value="center">Center</option>
+          <option value="top">Top</option>
+          <option value="bottom">Bottom</option>
+        </select>
+        <select id="textContent" onchange="state.textContent=this.value">
+          <option value="random">Random</option>
+          <option value="position">Position</option>
+          <option value="count">Count</option>
+        </select>
+      </div>
+      <div class="btn-row">
+        <span style="font-size:10px;color:#888;">Font:</span>
+        <button class="btn btn-sm" onclick="setFont(10,this)">10</button>
+        <button class="btn btn-sm active" onclick="setFont(12,this)">12</button>
+        <button class="btn btn-sm" onclick="setFont(16,this)">16</button>
+        <button class="btn btn-sm" onclick="setFont(18,this)">18</button>
+        <button class="btn btn-sm" onclick="setFont(20,this)">20</button>
+      </div>
+    </div>
+
+    <!-- Theme -->
+    <div class="section">
+      <div class="section-label">Theme</div>
+      <button class="btn btn-sm" onclick="toggleTheme()">Toggle Light/Dark</button>
     </div>
   </div>
+</div>
 
-  <!-- Mirror toggle -->
-  <div class="section">
-    <div class="toggle-row">
-      <span>Mirror</span>
-      <label class="toggle"><input type="checkbox" id="mirrorToggle" checked><div class="slider"></div></label>
-    </div>
+<!-- ── Main Area ────────────────────────────────────────────────────── -->
+<div id="main">
+  <div id="placeholder">
+    <h2>BABYTRACK</h2>
+    <p>Upload a video or open camera to start tracking</p>
   </div>
-
-  <!-- Export -->
-  <div class="section">
-    <div class="section-title">Export</div>
-    <div class="btn-row">
-      <button class="btn btn-secondary" id="screenshotBtn">Screenshot</button>
-      <button class="btn btn-primary" id="recordBtn">Record</button>
-    </div>
-  </div>
-
-  <div id="fps">-- FPS</div>
-</div>
-
-<!-- ── Canvas ───────────────────────────────────────────────────────── -->
-<div id="canvas-wrap">
-  <canvas id="mainCanvas"></canvas>
-  <video id="webcamVideo" autoplay playsinline></video>
+  <canvas id="display-canvas" class="hidden"></canvas>
 </div>
 </div>
+
+<!-- Hidden elements -->
+<video id="video" muted></video>
+<canvas id="offscreen"></canvas>
+<canvas id="filterCanvas"></canvas>
+<input type="file" id="videoInput" accept="video/*" class="hidden">
+<input type="file" id="audioInput" accept="audio/*" class="hidden">
 
 <script>
-/* =====================================================================
-   BabyTrack — Blob Tracking Visual Effects
-   Pure browser, zero dependencies.
-   ===================================================================== */
+/* ═══════════════════════════════════════════════════════════════════════
+   BabyTrack — Blob Tracking Visual Effects Tool
+   Zero-dependency, single-file implementation
+   ═══════════════════════════════════════════════════════════════════════ */
 
-// ── DOM refs ─────────────────────────────────────────────────────────
-const canvas      = document.getElementById('mainCanvas');
-const ctx         = canvas.getContext('2d');
-const video       = document.getElementById('webcamVideo');
-const fpsEl       = document.getElementById('fps');
+// ── Global State ──────────────────────────────────────────────────────
+const state = {
+  // Source
+  source: null,        // 'video' or 'camera'
+  playing: false,
+  speed: 1,
+  frameSkip: 0,
+  frameCount: 0,
 
-const detectionSel = document.getElementById('detectionMode');
-const thresholdIn  = document.getElementById('threshold');
-const thresholdVal = document.getElementById('thresholdVal');
-const minBlobIn    = document.getElementById('minBlobSize');
-const minBlobVal   = document.getElementById('minBlobVal');
-const effectSel    = document.getElementById('effectMode');
-const intensityIn  = document.getElementById('intensity');
-const intensityVal = document.getElementById('intensityVal');
-const speedIn      = document.getElementById('speed');
-const speedVal     = document.getElementById('speedVal');
-const showWebcamIn = document.getElementById('showWebcam');
-const mirrorIn     = document.getElementById('mirrorToggle');
-const screenshotBtn = document.getElementById('screenshotBtn');
-const recordBtn    = document.getElementById('recordBtn');
-const paletteRow   = document.getElementById('paletteRow');
-
-// ── Config ───────────────────────────────────────────────────────────
-const MAX_BLOBS = 10;
-const LERP_FACTOR = 0.25;            // smoothing for blob positions
-const PROCESS_SCALE = 0.25;          // downscale factor for detection (perf)
-
-const PALETTES = {
-  neon:   { label: 'Neon',   colors: ['#ff00ff','#00ffff','#ff3366','#33ff66','#ffff00'], bg: 'linear-gradient(135deg,#ff00ff,#00ffff)' },
-  pastel: { label: 'Pastel', colors: ['#ffb3ba','#baffc9','#bae1ff','#ffffba','#e8baff'], bg: 'linear-gradient(135deg,#ffb3ba,#bae1ff)' },
-  mono:   { label: 'Mono',   colors: ['#ffffff','#cccccc','#999999','#666666','#e0e0e0'], bg: 'linear-gradient(135deg,#fff,#666)' },
-  fire:   { label: 'Fire',   colors: ['#ff4500','#ff6a00','#ffd700','#ff0000','#ffaa00'], bg: 'linear-gradient(135deg,#ff4500,#ffd700)' },
-  ice:    { label: 'Ice',    colors: ['#00bfff','#1e90ff','#87cefa','#e0ffff','#4682b4'], bg: 'linear-gradient(135deg,#00bfff,#e0ffff)' },
-  acid:   { label: 'Acid',   colors: ['#39ff14','#dfff00','#ccff00','#76ff03','#00e676'], bg: 'linear-gradient(135deg,#39ff14,#dfff00)' },
-};
-
-let state = {
-  detection: 'brightness',
+  // Blob detection
   threshold: 128,
-  minBlob: 200,
-  effect: 'particles',
-  palette: 'neon',
-  intensity: 0.7,
-  speed: 0.6,
-  showWebcam: false,
-  mirror: true,
+  minBlobSize: 64,
+  sameSize: false,
+  countMode: 'size',   // 'size' or 'count'
+  maxBlobs: 32,
+
+  // Shape / Region
+  shape: 'square',     // 'square', 'circle', 'rounded'
+  region: 'box',
+  randomRegion: false,
+
+  // Effect
+  effect: 'basic',
+  filters: new Set(),
+
+  // Connection
+  connMode: 'off',     // 'off', 'mesh', 'hub'
+  connDash: false,
+  connRate: 0.5,
+  connWidth: 1,
+
+  // Audio
+  audioMode: 'none',
+  micStream: null,
+  audioCtx: null,
+  customAudio: null,
+  singleTracking: false,
+
+  // Color / Text
+  color: '#00ff88',
+  separateColors: false,
+  crazy: false,
+  showText: true,
+  textPosition: 'center',
+  textContent: 'random',
+  fontSize: 12,
+
+  // Export
+  hqExport: false,
+  recorder: null,
+  recording: false,
+
+  // Internal tracking
+  blobs: [],
+  smoothBlobs: [],
+  particlePhase: 0,
 };
 
-// ── Blob tracking state ──────────────────────────────────────────────
-let blobs = [];            // tracked blobs: { x, y, radius, vx, vy, id, age }
-let nextBlobId = 0;
-let prevFrame = null;      // for motion detection
+// ── Color palette for separate colors ─────────────────────────────────
+const PALETTE = [
+  '#00ff88', '#ff4488', '#44aaff', '#ffaa00', '#aa44ff',
+  '#00ffff', '#ff6644', '#88ff44', '#ff44ff', '#44ffaa',
+  '#ffff44', '#4488ff', '#ff8844', '#44ff88', '#ff4444',
+  '#8844ff'
+];
 
-// ── Effect state ─────────────────────────────────────────────────────
-let particles = [];
-let ripples = [];
-let trails = [];           // array of { points: [{x,y,t}], color }
-let time = 0;
+// Random words for label text
+const WORDS = [
+  'blob', 'object', 'target', 'entity', 'node', 'unit',
+  'item', 'point', 'zone', 'mark', 'ping', 'spot'
+];
 
-// ── FPS tracking ─────────────────────────────────────────────────────
-let frameCount = 0, lastFpsTime = performance.now(), currentFps = 0;
+// ── DOM References ────────────────────────────────────────────────────
+const video = document.getElementById('video');
+const canvas = document.getElementById('display-canvas');
+const ctx = canvas.getContext('2d');
+const offscreen = document.getElementById('offscreen');
+const offCtx = offscreen.getContext('2d', { willReadFrequently: true });
+const filterCanvas = document.getElementById('filterCanvas');
+const filterCtx = filterCanvas.getContext('2d', { willReadFrequently: true });
+const placeholder = document.getElementById('placeholder');
+const videoInput = document.getElementById('videoInput');
+const audioInput = document.getElementById('audioInput');
 
-// ── Offscreen canvas for frame processing ────────────────────────────
-const offCanvas = document.createElement('canvas');
-const offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
+// Detection resolution (downscaled for performance)
+const DW = 160, DH = 120;
+offscreen.width = DW;
+offscreen.height = DH;
 
-// ── Recording state ──────────────────────────────────────────────────
-let mediaRecorder = null;
-let recordedChunks = [];
-let isRecording = false;
-
-// =====================================================================
-//  INIT
-// =====================================================================
-
-function buildPaletteUI() {
-  paletteRow.innerHTML = '';
-  for (const [key, pal] of Object.entries(PALETTES)) {
-    const btn = document.createElement('button');
-    btn.className = 'palette-btn' + (key === state.palette ? ' active' : '');
-    btn.style.background = pal.bg;
-    btn.title = pal.label;
-    btn.dataset.key = key;
-    btn.addEventListener('click', () => {
-      state.palette = key;
-      paletteRow.querySelectorAll('.palette-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    });
-    paletteRow.appendChild(btn);
+// ── Utility: activate button in a row ─────────────────────────────────
+function activate(btn, ...deactivateIds) {
+  // Deactivate siblings in same btn-row
+  if (btn.parentElement) {
+    btn.parentElement.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
   }
+  btn.classList.add('active');
+  deactivateIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('active');
+  });
 }
 
-function bindControls() {
-  detectionSel.addEventListener('change', () => { state.detection = detectionSel.value; prevFrame = null; });
-  thresholdIn.addEventListener('input', () => { state.threshold = +thresholdIn.value; thresholdVal.textContent = thresholdIn.value; });
-  minBlobIn.addEventListener('input', () => { state.minBlob = +minBlobIn.value; minBlobVal.textContent = minBlobIn.value; });
-  effectSel.addEventListener('change', () => { state.effect = effectSel.value; particles = []; ripples = []; trails = []; });
-  intensityIn.addEventListener('input', () => { state.intensity = (+intensityIn.value) / 100; intensityVal.textContent = state.intensity.toFixed(2); });
-  speedIn.addEventListener('input', () => { state.speed = (+speedIn.value) / 100; speedVal.textContent = state.speed.toFixed(2); });
-  showWebcamIn.addEventListener('change', () => { state.showWebcam = showWebcamIn.checked; });
-  mirrorIn.addEventListener('change', () => { state.mirror = mirrorIn.checked; });
+// ── Control Setters ───────────────────────────────────────────────────
+function setSpeed(s, btn) { state.speed = s; video.playbackRate = s; activate(btn); }
+function setBBox(v, btn) { state.minBlobSize = v; activate(btn); }
+function setCount(v, btn) { state.maxBlobs = v; activate(btn); }
+function setShape(s, btn) { state.shape = s; activate(btn); }
 
-  screenshotBtn.addEventListener('click', takeScreenshot);
-  recordBtn.addEventListener('click', toggleRecording);
-}
-
-async function initWebcam() {
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' }, audio: false });
-    video.srcObject = stream;
-    await video.play();
-  } catch (err) {
-    console.error('Webcam access denied:', err);
-    alert('BabyTrack needs webcam access to work. Please allow camera permissions and reload.');
-  }
-}
-
-function resizeCanvas() {
-  const wrap = document.getElementById('canvas-wrap');
-  canvas.width = wrap.clientWidth;
-  canvas.height = wrap.clientHeight;
-}
-
-// =====================================================================
-//  BLOB DETECTION
-// =====================================================================
-
-/**
- * Process a video frame and return raw blob centroids.
- * We downscale for performance, threshold pixels, then find connected
- * components via a simple flood-fill to extract centroids + sizes.
- */
-function detectBlobs() {
-  if (video.readyState < 2) return [];
-
-  const vw = video.videoWidth;
-  const vh = video.videoHeight;
-  if (!vw || !vh) return [];
-
-  const sw = Math.round(vw * PROCESS_SCALE);
-  const sh = Math.round(vh * PROCESS_SCALE);
-  offCanvas.width = sw;
-  offCanvas.height = sh;
-  offCtx.drawImage(video, 0, 0, sw, sh);
-
-  const imageData = offCtx.getImageData(0, 0, sw, sh);
-  const data = imageData.data;
-
-  // Build binary mask
-  const mask = new Uint8Array(sw * sh);
-  const thresh = state.threshold;
-
-  if (state.detection === 'motion') {
-    // Frame differencing
-    const current = new Uint8Array(sw * sh);
-    for (let i = 0; i < sw * sh; i++) {
-      const idx = i * 4;
-      current[i] = Math.round(0.299 * data[idx] + 0.587 * data[idx+1] + 0.114 * data[idx+2]);
+function setEffect(e, btn) {
+  state.effect = e;
+  // Deactivate all effect buttons
+  document.querySelectorAll('.section').forEach(sec => {
+    if (sec.querySelector('.section-label')?.textContent === 'Basic Effects') {
+      sec.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
     }
-    if (prevFrame) {
-      for (let i = 0; i < sw * sh; i++) {
-        mask[i] = Math.abs(current[i] - prevFrame[i]) > thresh ? 1 : 0;
-      }
-    }
-    prevFrame = current;
+  });
+  btn.classList.add('active');
+}
+
+function toggleFilter(f, btn) {
+  if (state.filters.has(f)) {
+    state.filters.delete(f);
+    btn.classList.remove('active');
   } else {
-    const bright = state.detection === 'brightness';
-    for (let i = 0; i < sw * sh; i++) {
-      const idx = i * 4;
-      const lum = 0.299 * data[idx] + 0.587 * data[idx+1] + 0.114 * data[idx+2];
-      mask[i] = bright ? (lum > thresh ? 1 : 0) : (lum < thresh ? 1 : 0);
-    }
+    state.filters.add(f);
+    btn.classList.add('active');
+  }
+}
+
+function setConn(mode, btn) {
+  state.connMode = mode;
+  document.getElementById('connOff').classList.remove('active');
+  document.getElementById('connMesh').classList.remove('active');
+  document.getElementById('connHub').classList.remove('active');
+  btn.classList.add('active');
+}
+
+function setConnRate(r, btn) { state.connRate = r; activate(btn); }
+function setFont(s, btn) { state.fontSize = s; activate(btn); }
+
+function toggleTheme() {
+  document.body.classList.toggle('dark');
+  document.body.classList.toggle('light');
+}
+
+// ── Video Upload ──────────────────────────────────────────────────────
+function uploadVideo() {
+  videoInput.click();
+}
+videoInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  video.srcObject = null;
+  video.src = url;
+  video.loop = true;
+  video.muted = true;
+  video.playbackRate = state.speed;
+  video.play();
+  state.source = 'video';
+  state.playing = true;
+  startRendering();
+});
+
+// ── Camera ────────────────────────────────────────────────────────────
+async function openCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { width: 1280, height: 720 }, audio: false
+    });
+    video.srcObject = stream;
+    video.play();
+    state.source = 'camera';
+    state.playing = true;
+    startRendering();
+  } catch (err) {
+    alert('Camera access denied: ' + err.message);
+  }
+}
+
+// ── Start Rendering ───────────────────────────────────────────────────
+let rendering = false;
+function startRendering() {
+  placeholder.classList.add('hidden');
+  canvas.classList.remove('hidden');
+  if (!rendering) {
+    rendering = true;
+    requestAnimationFrame(renderLoop);
+  }
+}
+
+// ── Resize canvas to match video ──────────────────────────────────────
+function syncCanvasSize() {
+  const vw = video.videoWidth || 640;
+  const vh = video.videoHeight || 480;
+  if (canvas.width !== vw || canvas.height !== vh) {
+    canvas.width = vw;
+    canvas.height = vh;
+    filterCanvas.width = vw;
+    filterCanvas.height = vh;
+  }
+}
+
+// ── Main Render Loop ──────────────────────────────────────────────────
+function renderLoop() {
+  if (!state.playing) { rendering = false; return; }
+  requestAnimationFrame(renderLoop);
+
+  state.frameCount++;
+  // Frame skip for performance
+  if (state.frameSkip > 0 && state.frameCount % (state.frameSkip + 1) !== 0) return;
+
+  syncCanvasSize();
+  const w = canvas.width, h = canvas.height;
+
+  // Draw video frame
+  ctx.drawImage(video, 0, 0, w, h);
+
+  // Detect blobs on downscaled offscreen canvas
+  offCtx.drawImage(video, 0, 0, DW, DH);
+  const imgData = offCtx.getImageData(0, 0, DW, DH);
+  const rawBlobs = detectBlobs(imgData, DW, DH);
+
+  // Scale blobs to display size
+  const scaleX = w / DW, scaleY = h / DH;
+  let scaledBlobs = rawBlobs.map(b => ({
+    x: b.x * scaleX,
+    y: b.y * scaleY,
+    width: b.width * scaleX,
+    height: b.height * scaleY,
+    score: b.score
+  }));
+
+  // Apply count limits
+  if (state.countMode === 'count') {
+    scaledBlobs = scaledBlobs.slice(0, state.maxBlobs);
   }
 
-  // Connected-components via flood fill
-  const labels = new Int32Array(sw * sh).fill(-1);
-  const components = []; // { sumX, sumY, count }
-  let labelId = 0;
+  // Same size
+  if (state.sameSize && scaledBlobs.length > 0) {
+    const avgW = scaledBlobs.reduce((s, b) => s + b.width, 0) / scaledBlobs.length;
+    const avgH = scaledBlobs.reduce((s, b) => s + b.height, 0) / scaledBlobs.length;
+    scaledBlobs.forEach(b => { b.width = avgW; b.height = avgH; });
+  }
 
-  for (let y = 0; y < sh; y++) {
-    for (let x = 0; x < sw; x++) {
-      const idx = y * sw + x;
-      if (mask[idx] && labels[idx] === -1) {
+  // Single tracking: keep only the largest blob
+  if (state.singleTracking && scaledBlobs.length > 1) {
+    scaledBlobs.sort((a, b) => (b.width * b.height) - (a.width * a.height));
+    scaledBlobs = [scaledBlobs[0]];
+  }
+
+  // Smooth blobs with lerp + nearest-neighbor matching
+  smoothBlobs(scaledBlobs);
+
+  // Apply filter effects (post-processing on the video frame before overlays)
+  if (state.filters.size > 0) {
+    applyFilters(ctx, w, h);
+  }
+
+  // Draw blob overlays
+  state.smoothBlobs.forEach((blob, i) => {
+    const color = getBlobColor(i);
+    drawBlobEffect(ctx, blob, i, color, w, h);
+  });
+
+  // Draw connections
+  if (state.connMode !== 'off' && state.smoothBlobs.length > 1) {
+    drawConnections(ctx, state.smoothBlobs);
+  }
+
+  // Draw text
+  if (state.showText) {
+    drawBlobText(ctx, state.smoothBlobs);
+  }
+
+  // Audio trigger
+  triggerAudio(state.smoothBlobs);
+
+  state.particlePhase += 0.05;
+}
+
+// ── Blob Detection (brightness threshold + connected components) ──────
+function detectBlobs(imgData, w, h) {
+  const data = imgData.data;
+  const visited = new Uint8Array(w * h);
+  const blobs = [];
+
+  // Create brightness map
+  const bright = new Uint8Array(w * h);
+  for (let i = 0; i < w * h; i++) {
+    const idx = i * 4;
+    bright[i] = (data[idx] * 0.299 + data[idx + 1] * 0.587 + data[idx + 2] * 0.114) > state.threshold ? 1 : 0;
+  }
+
+  // Connected components via flood fill
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const pos = y * w + x;
+      if (bright[pos] && !visited[pos]) {
         // BFS flood fill
-        const comp = { sumX: 0, sumY: 0, count: 0 };
-        const queue = [idx];
-        labels[idx] = labelId;
-        while (queue.length) {
-          const ci = queue.pop();
-          const cx = ci % sw;
-          const cy = (ci - cx) / sw;
-          comp.sumX += cx;
-          comp.sumY += cy;
-          comp.count++;
-          // 4-connected neighbors
+        const queue = [pos];
+        visited[pos] = 1;
+        let minX = x, maxX = x, minY = y, maxY = y;
+        let count = 0;
+        let totalBright = 0;
+
+        while (queue.length > 0) {
+          const p = queue.pop();
+          const px = p % w, py = (p / w) | 0;
+          count++;
+          totalBright += data[p * 4] + data[p * 4 + 1] + data[p * 4 + 2];
+
+          if (px < minX) minX = px;
+          if (px > maxX) maxX = px;
+          if (py < minY) minY = py;
+          if (py > maxY) maxY = py;
+
+          // 4-connectivity neighbors
           const neighbors = [
-            cy > 0 ? ci - sw : -1,
-            cy < sh - 1 ? ci + sw : -1,
-            cx > 0 ? ci - 1 : -1,
-            cx < sw - 1 ? ci + 1 : -1,
+            p - 1, p + 1, p - w, p + w
           ];
-          for (const ni of neighbors) {
-            if (ni >= 0 && mask[ni] && labels[ni] === -1) {
-              labels[ni] = labelId;
-              queue.push(ni);
+          for (const n of neighbors) {
+            if (n >= 0 && n < w * h && !visited[n] && bright[n]) {
+              visited[n] = 1;
+              queue.push(n);
             }
           }
         }
-        components.push(comp);
-        labelId++;
+
+        const bw = maxX - minX + 1;
+        const bh = maxY - minY + 1;
+        // Filter by minimum blob size
+        if (bw >= 2 && bh >= 2 && count >= 4) {
+          blobs.push({
+            x: minX,
+            y: minY,
+            width: bw,
+            height: bh,
+            score: Math.min(1, count / (bw * bh))
+          });
+        }
       }
     }
   }
 
-  // Filter by minimum size and convert to canvas coordinates
-  const scale = 1 / PROCESS_SCALE;
-  const rawBlobs = [];
-  for (const comp of components) {
-    if (comp.count < state.minBlob * PROCESS_SCALE * PROCESS_SCALE) continue;
-    const cx = (comp.sumX / comp.count) * scale;
-    const cy = (comp.sumY / comp.count) * scale;
-    const radius = Math.sqrt(comp.count / Math.PI) * scale;
-    rawBlobs.push({ x: cx, y: cy, radius });
-  }
+  // Sort by area descending, limit count
+  blobs.sort((a, b) => (b.width * b.height) - (a.width * a.height));
 
-  // Sort by size descending and cap
-  rawBlobs.sort((a, b) => b.radius - a.radius);
-  return rawBlobs.slice(0, MAX_BLOBS);
+  // Filter by minimum bounding box size
+  const minSize = state.minBlobSize / (canvas.width / DW);
+  const filtered = blobs.filter(b => b.width >= minSize || b.height >= minSize);
+
+  return filtered.slice(0, state.maxBlobs);
 }
 
-/**
- * Match detected blobs to existing tracked blobs (simple nearest-neighbor),
- * then lerp positions for smoothness.
- */
-function updateTrackedBlobs(rawBlobs) {
-  const vw = video.videoWidth || canvas.width;
-  const vh = video.videoHeight || canvas.height;
+// ── Smooth blob tracking (lerp + nearest neighbor matching) ───────────
+function smoothBlobs(newBlobs) {
+  const lerp = 0.3;
+  const maxDist = 200;
 
-  // Map raw blob coordinates from video space to canvas space
-  const scaleX = canvas.width / vw;
-  const scaleY = canvas.height / vh;
-
-  const mapped = rawBlobs.map(b => ({
-    x: state.mirror ? canvas.width - b.x * scaleX : b.x * scaleX,
-    y: b.y * scaleY,
-    radius: b.radius * Math.min(scaleX, scaleY),
-  }));
-
-  // Greedy nearest-neighbor matching
-  const used = new Set();
-  const matched = new Set();
-
-  for (const blob of blobs) {
-    let bestDist = Infinity, bestIdx = -1;
-    for (let i = 0; i < mapped.length; i++) {
-      if (used.has(i)) continue;
-      const dx = blob.x - mapped[i].x;
-      const dy = blob.y - mapped[i].y;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < bestDist && dist < 200) {
-        bestDist = dist; bestIdx = i;
-      }
-    }
-    if (bestIdx >= 0) {
-      const m = mapped[bestIdx];
-      blob.vx = (m.x - blob.x) * 0.5;
-      blob.vy = (m.y - blob.y) * 0.5;
-      blob.x += (m.x - blob.x) * LERP_FACTOR;
-      blob.y += (m.y - blob.y) * LERP_FACTOR;
-      blob.radius += (m.radius - blob.radius) * LERP_FACTOR;
-      blob.age++;
-      used.add(bestIdx);
-      matched.add(blob.id);
-    }
-  }
-
-  // Remove unmatched blobs (give them a short grace period)
-  blobs = blobs.filter(b => {
-    if (matched.has(b.id)) { b.missCount = 0; return true; }
-    b.missCount = (b.missCount || 0) + 1;
-    return b.missCount < 10;
-  });
-
-  // Add new unmatched detections
-  for (let i = 0; i < mapped.length; i++) {
-    if (used.has(i)) continue;
-    blobs.push({
-      x: mapped[i].x, y: mapped[i].y, radius: mapped[i].radius,
-      vx: 0, vy: 0, id: nextBlobId++, age: 0, missCount: 0,
-    });
-  }
-}
-
-// =====================================================================
-//  VISUAL EFFECTS
-// =====================================================================
-
-function palColor(i) {
-  const colors = PALETTES[state.palette].colors;
-  return colors[i % colors.length];
-}
-
-function hexToRgb(hex) {
-  const n = parseInt(hex.slice(1), 16);
-  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-}
-
-// ── Particles ────────────────────────────────────────────────────────
-function updateParticles(dt) {
-  const spawnRate = Math.round(8 * state.intensity);
-  for (const blob of blobs) {
-    for (let i = 0; i < spawnRate; i++) {
-      const angle = Math.random() * Math.PI * 2;
-      const speed = (1 + Math.random() * 3) * state.speed;
-      particles.push({
-        x: blob.x + (Math.random() - 0.5) * blob.radius * 0.5,
-        y: blob.y + (Math.random() - 0.5) * blob.radius * 0.5,
-        vx: Math.cos(angle) * speed * 60,
-        vy: Math.sin(angle) * speed * 60,
-        life: 1,
-        decay: 0.3 + Math.random() * 0.7,
-        color: palColor(blob.id + i),
-        size: 2 + Math.random() * 4 * state.intensity,
-      });
-    }
-  }
-
-  // Attract particles toward blobs
-  for (const p of particles) {
-    for (const blob of blobs) {
-      const dx = blob.x - p.x;
-      const dy = blob.y - p.y;
-      const dist = Math.sqrt(dx*dx + dy*dy) + 1;
-      const force = (blob.radius * 30 * state.intensity) / (dist * dist);
-      p.vx += dx / dist * force * dt;
-      p.vy += dy / dist * force * dt;
-    }
-    p.x += p.vx * dt;
-    p.y += p.vy * dt;
-    p.vx *= 0.98;
-    p.vy *= 0.98;
-    p.life -= p.decay * dt;
-  }
-
-  particles = particles.filter(p => p.life > 0);
-  if (particles.length > 3000) particles.splice(0, particles.length - 3000);
-}
-
-function drawParticles() {
-  for (const p of particles) {
-    const alpha = Math.max(0, p.life) * state.intensity;
-    const [r,g,b] = hexToRgb(p.color);
-    ctx.fillStyle = `rgba(${r},${g},${b},${alpha.toFixed(2)})`;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
-
-// ── Ripple ───────────────────────────────────────────────────────────
-function updateRipples(dt) {
-  // Spawn ripples at blob positions periodically
-  for (const blob of blobs) {
-    if (blob.age % Math.max(1, Math.round(12 / state.speed)) === 0) {
-      ripples.push({
-        x: blob.x, y: blob.y,
-        radius: blob.radius * 0.3,
-        maxRadius: blob.radius * 4 + 100 * state.intensity,
-        life: 1,
-        color: palColor(blob.id),
-      });
-    }
-  }
-
-  for (const r of ripples) {
-    r.radius += (r.maxRadius * 0.8) * dt * state.speed;
-    r.life -= 0.4 * dt * state.speed;
-  }
-  ripples = ripples.filter(r => r.life > 0);
-  if (ripples.length > 80) ripples.splice(0, ripples.length - 80);
-}
-
-function drawRipples() {
-  ctx.lineWidth = 2;
-  for (const r of ripples) {
-    const alpha = r.life * state.intensity * 0.8;
-    const [cr,cg,cb] = hexToRgb(r.color);
-    ctx.strokeStyle = `rgba(${cr},${cg},${cb},${alpha.toFixed(2)})`;
-    ctx.beginPath();
-    ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
-    ctx.stroke();
-
-    // Inner glow ring
-    if (r.life > 0.3) {
-      ctx.strokeStyle = `rgba(${cr},${cg},${cb},${(alpha * 0.3).toFixed(2)})`;
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      ctx.arc(r.x, r.y, r.radius * 0.95, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.lineWidth = 2;
-    }
-  }
-}
-
-// ── Trails ───────────────────────────────────────────────────────────
-function updateTrails(dt) {
-  // Ensure a trail exists for each blob
-  for (const blob of blobs) {
-    let trail = trails.find(t => t.id === blob.id);
-    if (!trail) {
-      trail = { id: blob.id, points: [], color: palColor(blob.id) };
-      trails.push(trail);
-    }
-    trail.points.push({ x: blob.x, y: blob.y, t: time });
-    // Limit trail length
-    const maxLen = Math.round(120 * state.intensity);
-    if (trail.points.length > maxLen) trail.points.splice(0, trail.points.length - maxLen);
-  }
-  // Remove trails for dead blobs (after fadeout)
-  trails = trails.filter(t => {
-    const blobAlive = blobs.some(b => b.id === t.id);
-    if (!blobAlive) {
-      t.points.shift();
-      return t.points.length > 0;
-    }
-    return true;
-  });
-}
-
-function drawTrails() {
-  for (const trail of trails) {
-    if (trail.points.length < 2) continue;
-    const [r,g,b] = hexToRgb(trail.color);
-    const len = trail.points.length;
-    for (let i = 1; i < len; i++) {
-      const alpha = (i / len) * state.intensity * 0.9;
-      const width = (i / len) * 6 * state.intensity + 1;
-      ctx.strokeStyle = `rgba(${r},${g},${b},${alpha.toFixed(2)})`;
-      ctx.lineWidth = width;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(trail.points[i-1].x, trail.points[i-1].y);
-      ctx.lineTo(trail.points[i].x, trail.points[i].y);
-      ctx.stroke();
-    }
-    // Glow at head
-    if (len > 0) {
-      const head = trail.points[len - 1];
-      const grad = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 20 * state.intensity);
-      grad.addColorStop(0, `rgba(${r},${g},${b},${(0.6 * state.intensity).toFixed(2)})`);
-      grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(head.x, head.y, 20 * state.intensity, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-}
-
-// ── Magnetic Lines ───────────────────────────────────────────────────
-function drawMagneticLines() {
-  if (blobs.length < 1) return;
-  ctx.lineWidth = 1.5;
-
-  // Lines between each pair of blobs
-  for (let i = 0; i < blobs.length; i++) {
-    for (let j = i + 1; j < blobs.length; j++) {
-      const a = blobs[i], b = blobs[j];
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist > 600) continue;
-
-      const color = palColor(i + j);
-      const [cr,cg,cb] = hexToRgb(color);
-      const numLines = Math.round(6 * state.intensity);
-
-      for (let l = 0; l < numLines; l++) {
-        const offset = (l - numLines/2) * 15;
-        const alpha = (1 - dist / 600) * state.intensity * 0.6;
-        ctx.strokeStyle = `rgba(${cr},${cg},${cb},${alpha.toFixed(2)})`;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        // Curved field lines via quadratic bezier
-        const mx = (a.x + b.x) / 2 + dy * 0.3 * Math.sin(time * state.speed * 2 + l);
-        const my = (a.y + b.y) / 2 - dx * 0.3 * Math.sin(time * state.speed * 2 + l) + offset;
-        ctx.quadraticCurveTo(mx, my, b.x, b.y);
-        ctx.stroke();
-      }
-    }
-  }
-
-  // Radial field lines around isolated blobs
-  for (const blob of blobs) {
-    const color = palColor(blob.id);
-    const [cr,cg,cb] = hexToRgb(color);
-    const numRays = Math.round(12 * state.intensity);
-    for (let r = 0; r < numRays; r++) {
-      const angle = (r / numRays) * Math.PI * 2 + time * state.speed * 0.5;
-      const len = blob.radius * 2 + 40 * state.intensity;
-      const alpha = 0.4 * state.intensity;
-      ctx.strokeStyle = `rgba(${cr},${cg},${cb},${alpha.toFixed(2)})`;
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(
-        blob.x + Math.cos(angle) * blob.radius * 0.5,
-        blob.y + Math.sin(angle) * blob.radius * 0.5
-      );
-      ctx.lineTo(
-        blob.x + Math.cos(angle) * len,
-        blob.y + Math.sin(angle) * len
-      );
-      ctx.stroke();
-    }
-  }
-}
-
-// ── Noise Field ──────────────────────────────────────────────────────
-// Simple value noise (good enough for real-time VFX)
-const NOISE_PERM = new Uint8Array(512);
-(function initNoise() {
-  const p = new Uint8Array(256);
-  for (let i = 0; i < 256; i++) p[i] = i;
-  for (let i = 255; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [p[i], p[j]] = [p[j], p[i]];
-  }
-  NOISE_PERM.set(p); NOISE_PERM.set(p, 256);
-})();
-
-function fade(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
-function lerp(a, b, t) { return a + t * (b - a); }
-function grad(hash, x, y) {
-  const h = hash & 3;
-  const u = h < 2 ? x : -x;
-  const v = h === 0 || h === 3 ? y : -y;
-  return u + v;
-}
-function noise2d(x, y) {
-  const xi = Math.floor(x) & 255, yi = Math.floor(y) & 255;
-  const xf = x - Math.floor(x), yf = y - Math.floor(y);
-  const u = fade(xf), v = fade(yf);
-  const aa = NOISE_PERM[NOISE_PERM[xi] + yi];
-  const ab = NOISE_PERM[NOISE_PERM[xi] + yi + 1];
-  const ba = NOISE_PERM[NOISE_PERM[xi + 1] + yi];
-  const bb = NOISE_PERM[NOISE_PERM[xi + 1] + yi + 1];
-  return lerp(lerp(grad(aa, xf, yf), grad(ba, xf - 1, yf), u),
-              lerp(grad(ab, xf, yf - 1), grad(bb, xf - 1, yf - 1), u), v);
-}
-
-function drawNoiseField() {
-  const step = 16;
-  const cols = Math.ceil(canvas.width / step);
-  const rows = Math.ceil(canvas.height / step);
-  const scale = 0.015;
-  const colors = PALETTES[state.palette].colors;
-
-  ctx.lineWidth = 1.5;
-  ctx.lineCap = 'round';
-
-  for (let gy = 0; gy < rows; gy++) {
-    for (let gx = 0; gx < cols; gx++) {
-      const px = gx * step + step / 2;
-      const py = gy * step + step / 2;
-
-      // Base noise angle
-      let angle = noise2d(gx * scale + time * state.speed * 0.3, gy * scale + time * state.speed * 0.2) * Math.PI * 4;
-
-      // Distort by blobs
-      let totalForce = 0;
-      for (const blob of blobs) {
-        const dx = blob.x - px, dy = blob.y - py;
-        const dist = Math.sqrt(dx*dx + dy*dy) + 1;
-        const force = (blob.radius * 80 * state.intensity) / (dist * dist);
-        angle += Math.atan2(dy, dx) * force;
-        totalForce += force;
-      }
-
-      const len = (8 + totalForce * 40) * state.intensity;
-      const alpha = Math.min(0.7, 0.15 + totalForce * 2) * state.intensity;
-      const colorIdx = Math.floor(noise2d(gx * 0.1, gy * 0.1) * 100 + time) % colors.length;
-      const absIdx = Math.abs(colorIdx) % colors.length;
-      const [r,g,b] = hexToRgb(colors[absIdx]);
-
-      ctx.strokeStyle = `rgba(${r},${g},${b},${alpha.toFixed(2)})`;
-      ctx.beginPath();
-      ctx.moveTo(px, py);
-      ctx.lineTo(px + Math.cos(angle) * len, py + Math.sin(angle) * len);
-      ctx.stroke();
-    }
-  }
-}
-
-// =====================================================================
-//  RENDER LOOP
-// =====================================================================
-
-function drawWebcamBackground() {
-  if (!state.showWebcam || video.readyState < 2) return;
-  ctx.save();
-  if (state.mirror) {
-    ctx.translate(canvas.width, 0);
-    ctx.scale(-1, 1);
-  }
-  ctx.globalAlpha = 0.3;
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  ctx.globalAlpha = 1;
-  ctx.restore();
-}
-
-function render(timestamp) {
-  requestAnimationFrame(render);
-
-  // FPS
-  frameCount++;
-  if (timestamp - lastFpsTime >= 1000) {
-    currentFps = frameCount;
-    frameCount = 0;
-    lastFpsTime = timestamp;
-    fpsEl.textContent = currentFps + ' FPS';
-  }
-
-  const dt = 1 / 60; // fixed timestep for consistency
-  time += dt;
-
-  // Detect & track
-  const raw = detectBlobs();
-  updateTrackedBlobs(raw);
-
-  // Clear
-  ctx.fillStyle = 'rgba(0,0,0,0.15)';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  // Solid black underlay for clean look (blend with trail fade)
-  if (state.effect !== 'trails' && state.effect !== 'particles') {
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
-
-  drawWebcamBackground();
-
-  // Render active effect
-  switch (state.effect) {
-    case 'particles':
-      updateParticles(dt);
-      drawParticles();
-      break;
-    case 'ripple':
-      updateRipples(dt);
-      drawRipples();
-      break;
-    case 'trails':
-      updateTrails(dt);
-      drawTrails();
-      break;
-    case 'magnetic':
-      drawMagneticLines();
-      break;
-    case 'noise':
-      drawNoiseField();
-      break;
-  }
-
-  // Draw blob debug circles (subtle)
-  ctx.lineWidth = 1;
-  for (const blob of blobs) {
-    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-    ctx.beginPath();
-    ctx.arc(blob.x, blob.y, blob.radius, 0, Math.PI * 2);
-    ctx.stroke();
-  }
-}
-
-// =====================================================================
-//  EXPORT: Screenshot & Recording
-// =====================================================================
-
-function takeScreenshot() {
-  const link = document.createElement('a');
-  link.download = `babytrack-${Date.now()}.png`;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-}
-
-function toggleRecording() {
-  if (isRecording) {
-    mediaRecorder.stop();
-    recordBtn.textContent = 'Record';
-    recordBtn.classList.remove('btn-danger');
-    recordBtn.classList.add('btn-primary');
-    isRecording = false;
+  if (state.smoothBlobs.length === 0) {
+    state.smoothBlobs = newBlobs.map(b => ({ ...b }));
     return;
   }
 
-  recordedChunks = [];
+  const matched = new Set();
+  const updated = [];
+
+  // Match each new blob to nearest existing smooth blob
+  for (const nb of newBlobs) {
+    let bestIdx = -1, bestDist = Infinity;
+    const ncx = nb.x + nb.width / 2, ncy = nb.y + nb.height / 2;
+
+    state.smoothBlobs.forEach((sb, i) => {
+      if (matched.has(i)) return;
+      const scx = sb.x + sb.width / 2, scy = sb.y + sb.height / 2;
+      const d = Math.hypot(ncx - scx, ncy - scy);
+      if (d < bestDist) { bestDist = d; bestIdx = i; }
+    });
+
+    if (bestIdx >= 0 && bestDist < maxDist) {
+      matched.add(bestIdx);
+      const sb = state.smoothBlobs[bestIdx];
+      updated.push({
+        x: sb.x + (nb.x - sb.x) * lerp,
+        y: sb.y + (nb.y - sb.y) * lerp,
+        width: sb.width + (nb.width - sb.width) * lerp,
+        height: sb.height + (nb.height - sb.height) * lerp,
+        score: nb.score
+      });
+    } else {
+      updated.push({ ...nb });
+    }
+  }
+
+  state.smoothBlobs = updated;
+}
+
+// ── Get blob color based on settings ──────────────────────────────────
+function getBlobColor(index) {
+  if (state.crazy) {
+    const hue = (Date.now() * 0.5 + index * 60) % 360;
+    return `hsl(${hue}, 100%, 60%)`;
+  }
+  if (state.separateColors) {
+    return PALETTE[index % PALETTE.length];
+  }
+  return state.color;
+}
+
+// ── Draw shape path helper ────────────────────────────────────────────
+function shapePath(ctx, x, y, w, h) {
+  if (state.shape === 'circle') {
+    ctx.beginPath();
+    ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, Math.PI * 2);
+  } else if (state.shape === 'rounded') {
+    const r = Math.min(w, h) * 0.15;
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  } else {
+    ctx.beginPath();
+    ctx.rect(x, y, w, h);
+  }
+}
+
+// ── Draw Blob Effect ──────────────────────────────────────────────────
+function drawBlobEffect(ctx, blob, index, color, cw, ch) {
+  const { x, y, width: bw, height: bh, score } = blob;
+  const cx = x + bw / 2, cy = y + bh / 2;
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 2;
+
+  switch (state.effect) {
+    case 'basic':
+      shapePath(ctx, x, y, bw, bh);
+      ctx.stroke();
+      ctx.font = '10px monospace';
+      ctx.fillText((score * 100 | 0) + '%', x, y - 4);
+      break;
+
+    case 'label':
+      shapePath(ctx, x, y, bw, bh);
+      ctx.stroke();
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y - 16, bw, 16);
+      ctx.fillStyle = '#000';
+      ctx.font = 'bold 10px monospace';
+      ctx.fillText('OBJ-' + (index + 1), x + 3, y - 4);
+      break;
+
+    case 'frame': {
+      const corner = Math.min(bw, bh) * 0.3;
+      ctx.lineWidth = 3;
+      // Top-left
+      ctx.beginPath(); ctx.moveTo(x, y + corner); ctx.lineTo(x, y); ctx.lineTo(x + corner, y); ctx.stroke();
+      // Top-right
+      ctx.beginPath(); ctx.moveTo(x + bw - corner, y); ctx.lineTo(x + bw, y); ctx.lineTo(x + bw, y + corner); ctx.stroke();
+      // Bottom-left
+      ctx.beginPath(); ctx.moveTo(x, y + bh - corner); ctx.lineTo(x, y + bh); ctx.lineTo(x + corner, y + bh); ctx.stroke();
+      // Bottom-right
+      ctx.beginPath(); ctx.moveTo(x + bw - corner, y + bh); ctx.lineTo(x + bw, y + bh); ctx.lineTo(x + bw, y + bh - corner); ctx.stroke();
+      break;
+    }
+
+    case 'lframe': {
+      const cl = Math.min(bw, bh) * 0.25;
+      ctx.lineWidth = 2;
+      // Only L-shaped corners (two lines each)
+      // Top-left
+      ctx.beginPath(); ctx.moveTo(x, y + cl); ctx.lineTo(x, y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + cl, y); ctx.stroke();
+      // Top-right
+      ctx.beginPath(); ctx.moveTo(x + bw, y + cl); ctx.lineTo(x + bw, y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x + bw, y); ctx.lineTo(x + bw - cl, y); ctx.stroke();
+      // Bottom-left
+      ctx.beginPath(); ctx.moveTo(x, y + bh - cl); ctx.lineTo(x, y + bh); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x, y + bh); ctx.lineTo(x + cl, y + bh); ctx.stroke();
+      // Bottom-right
+      ctx.beginPath(); ctx.moveTo(x + bw, y + bh - cl); ctx.lineTo(x + bw, y + bh); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x + bw, y + bh); ctx.lineTo(x + bw - cl, y + bh); ctx.stroke();
+      break;
+    }
+
+    case 'xframe':
+      shapePath(ctx, x, y, bw, bh);
+      ctx.stroke();
+      // X lines
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + bw, y + bh); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x + bw, y); ctx.lineTo(x, y + bh); ctx.stroke();
+      break;
+
+    case 'grid': {
+      shapePath(ctx, x, y, bw, bh);
+      ctx.stroke();
+      ctx.lineWidth = 0.5;
+      ctx.globalAlpha = 0.4;
+      const gs = Math.max(8, Math.min(bw, bh) / 4);
+      for (let gx = x + gs; gx < x + bw; gx += gs) {
+        ctx.beginPath(); ctx.moveTo(gx, y); ctx.lineTo(gx, y + bh); ctx.stroke();
+      }
+      for (let gy = y + gs; gy < y + bh; gy += gs) {
+        ctx.beginPath(); ctx.moveTo(x, gy); ctx.lineTo(x + bw, gy); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      break;
+    }
+
+    case 'particle': {
+      const numP = 8;
+      const radius = Math.max(bw, bh) * 0.6;
+      for (let i = 0; i < numP; i++) {
+        const angle = state.particlePhase + (Math.PI * 2 * i / numP);
+        const px = cx + Math.cos(angle) * radius;
+        const py = cy + Math.sin(angle) * radius;
+        ctx.beginPath();
+        ctx.arc(px, py, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      // Center dot
+      ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2); ctx.fill();
+      break;
+    }
+
+    case 'dash':
+      ctx.setLineDash([6, 4]);
+      shapePath(ctx, x, y, bw, bh);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      break;
+
+    case 'scope': {
+      // Crosshair / scope reticle
+      const r = Math.max(bw, bh) * 0.5;
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, r * 0.5, 0, Math.PI * 2); ctx.stroke();
+      // Cross lines
+      ctx.beginPath(); ctx.moveTo(cx - r * 1.2, cy); ctx.lineTo(cx + r * 1.2, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy - r * 1.2); ctx.lineTo(cx, cy + r * 1.2); ctx.stroke();
+      // Tick marks
+      for (let i = -1; i <= 1; i += 2) {
+        ctx.beginPath();
+        ctx.moveTo(cx + r * 0.7 * i, cy - 4);
+        ctx.lineTo(cx + r * 0.7 * i, cy + 4);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(cx - 4, cy + r * 0.7 * i);
+        ctx.lineTo(cx + 4, cy + r * 0.7 * i);
+        ctx.stroke();
+      }
+      break;
+    }
+
+    case 'win2k': {
+      // Windows 2000 style dialog box
+      const titleH = 18;
+      // Outer border (raised effect)
+      ctx.fillStyle = '#c0c0c0';
+      ctx.fillRect(x, y, bw, bh);
+      // Title bar
+      ctx.fillStyle = '#000080';
+      ctx.fillRect(x + 2, y + 2, bw - 4, titleH);
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 11px "Courier New", monospace';
+      ctx.fillText('blob_' + (index + 1) + '.exe', x + 5, y + 15);
+      // Close button
+      ctx.fillStyle = '#c0c0c0';
+      ctx.fillRect(x + bw - 18, y + 3, 14, 14);
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x + bw - 18, y + 3, 14, 14);
+      ctx.beginPath(); ctx.moveTo(x + bw - 15, y + 6); ctx.lineTo(x + bw - 7, y + 14); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x + bw - 7, y + 6); ctx.lineTo(x + bw - 15, y + 14); ctx.stroke();
+      // Border lines
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x, y + bh); ctx.lineTo(x, y); ctx.lineTo(x + bw, y); ctx.stroke();
+      ctx.strokeStyle = '#808080';
+      ctx.beginPath(); ctx.moveTo(x + bw, y); ctx.lineTo(x + bw, y + bh); ctx.lineTo(x, y + bh); ctx.stroke();
+      break;
+    }
+
+    case 'label2':
+      shapePath(ctx, x, y, bw, bh);
+      ctx.stroke();
+      // Label below the box
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.85;
+      ctx.fillRect(x, y + bh + 2, bw, 18);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = '#000';
+      ctx.font = 'bold 10px monospace';
+      ctx.fillText('ID:' + (index + 1) + ' ' + (score * 100 | 0) + '%', x + 3, y + bh + 14);
+      break;
+
+    case 'glow': {
+      // Glowing halo
+      const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(bw, bh) * 0.8);
+      gradient.addColorStop(0, color + '66');
+      gradient.addColorStop(0.5, color + '33');
+      gradient.addColorStop(1, color + '00');
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, bw * 0.8, bh * 0.8, 0, 0, Math.PI * 2);
+      ctx.fill();
+      // Inner ring
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      shapePath(ctx, x, y, bw, bh);
+      ctx.stroke();
+      break;
+    }
+
+    case 'backdrop':
+      ctx.globalAlpha = 0.3;
+      ctx.fillStyle = color;
+      shapePath(ctx, x, y, bw, bh);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = color;
+      shapePath(ctx, x, y, bw, bh);
+      ctx.stroke();
+      break;
+  }
+
+  ctx.restore();
+}
+
+// ── Filter Effects (post-processing) ──────────────────────────────────
+function applyFilters(ctx, w, h) {
+  const imageData = ctx.getImageData(0, 0, w, h);
+  const data = imageData.data;
+  const len = data.length;
+
+  for (const filter of state.filters) {
+    switch (filter) {
+      case 'invert':
+        for (let i = 0; i < len; i += 4) {
+          data[i] = 255 - data[i];
+          data[i + 1] = 255 - data[i + 1];
+          data[i + 2] = 255 - data[i + 2];
+        }
+        break;
+
+      case 'thermal':
+        for (let i = 0; i < len; i += 4) {
+          const v = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114);
+          // Heat map LUT
+          if (v < 85) {
+            data[i] = 0; data[i + 1] = 0; data[i + 2] = v * 3;
+          } else if (v < 170) {
+            data[i] = (v - 85) * 3; data[i + 1] = 0; data[i + 2] = 255 - (v - 85) * 3;
+          } else {
+            data[i] = 255; data[i + 1] = (v - 170) * 3; data[i + 2] = 0;
+          }
+        }
+        break;
+
+      case 'pixel': {
+        const ps = 8; // pixel size
+        for (let py = 0; py < h; py += ps) {
+          for (let px = 0; px < w; px += ps) {
+            const idx = (py * w + px) * 4;
+            const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+            for (let dy = 0; dy < ps && py + dy < h; dy++) {
+              for (let dx = 0; dx < ps && px + dx < w; dx++) {
+                const i = ((py + dy) * w + (px + dx)) * 4;
+                data[i] = r; data[i + 1] = g; data[i + 2] = b;
+              }
+            }
+          }
+        }
+        break;
+      }
+
+      case 'tone':
+        // Sepia tone
+        for (let i = 0; i < len; i += 4) {
+          const r = data[i], g = data[i + 1], b = data[i + 2];
+          data[i] = Math.min(255, r * 0.393 + g * 0.769 + b * 0.189);
+          data[i + 1] = Math.min(255, r * 0.349 + g * 0.686 + b * 0.168);
+          data[i + 2] = Math.min(255, r * 0.272 + g * 0.534 + b * 0.131);
+        }
+        break;
+
+      case 'dither': {
+        // Ordered 4x4 Bayer dither
+        const bayer = [
+          [0, 8, 2, 10],
+          [12, 4, 14, 6],
+          [3, 11, 1, 9],
+          [15, 7, 13, 5]
+        ];
+        for (let py = 0; py < h; py++) {
+          for (let px = 0; px < w; px++) {
+            const i = (py * w + px) * 4;
+            const threshold = (bayer[py % 4][px % 4] / 16) * 255;
+            for (let c = 0; c < 3; c++) {
+              data[i + c] = data[i + c] > threshold ? 255 : 0;
+            }
+          }
+        }
+        break;
+      }
+
+      case 'edge': {
+        // Sobel edge detection
+        const copy = new Uint8ClampedArray(data);
+        for (let py = 1; py < h - 1; py++) {
+          for (let px = 1; px < w - 1; px++) {
+            const i = (py * w + px) * 4;
+            for (let c = 0; c < 3; c++) {
+              const tl = copy[((py-1)*w+(px-1))*4+c];
+              const t  = copy[((py-1)*w+px)*4+c];
+              const tr = copy[((py-1)*w+(px+1))*4+c];
+              const l  = copy[(py*w+(px-1))*4+c];
+              const r  = copy[(py*w+(px+1))*4+c];
+              const bl = copy[((py+1)*w+(px-1))*4+c];
+              const b  = copy[((py+1)*w+px)*4+c];
+              const br = copy[((py+1)*w+(px+1))*4+c];
+              const gx = -tl - 2*l - bl + tr + 2*r + br;
+              const gy = -tl - 2*t - tr + bl + 2*b + br;
+              data[i + c] = Math.min(255, Math.sqrt(gx * gx + gy * gy));
+            }
+          }
+        }
+        break;
+      }
+
+      case 'xray':
+        // High contrast invert
+        for (let i = 0; i < len; i += 4) {
+          const v = (data[i] + data[i + 1] + data[i + 2]) / 3;
+          const inv = 255 - v;
+          const c = inv < 128 ? inv * inv / 128 : 255 - (255 - inv) * (255 - inv) / 128;
+          data[i] = c; data[i + 1] = c; data[i + 2] = c + 30;
+        }
+        break;
+
+      case 'fusion':
+        // Color blend/overlay effect
+        for (let i = 0; i < len; i += 4) {
+          const r = data[i], g = data[i + 1], b = data[i + 2];
+          data[i] = Math.min(255, r * 1.2 + g * 0.1);
+          data[i + 1] = Math.min(255, g * 0.8 + b * 0.3);
+          data[i + 2] = Math.min(255, b * 1.3 + r * 0.1);
+        }
+        break;
+
+      case 'mask':
+        // Darken non-blob areas
+        if (state.smoothBlobs.length > 0) {
+          for (let py = 0; py < h; py++) {
+            for (let px = 0; px < w; px++) {
+              let inBlob = false;
+              for (const b of state.smoothBlobs) {
+                if (px >= b.x && px <= b.x + b.width && py >= b.y && py <= b.y + b.height) {
+                  inBlob = true; break;
+                }
+              }
+              if (!inBlob) {
+                const i = (py * w + px) * 4;
+                data[i] *= 0.2;
+                data[i + 1] *= 0.2;
+                data[i + 2] *= 0.2;
+              }
+            }
+          }
+        }
+        break;
+
+      case 'blink':
+        // Flash effect based on time
+        if (Math.sin(Date.now() * 0.01) > 0.5) {
+          for (let i = 0; i < len; i += 4) {
+            data[i] = Math.min(255, data[i] + 80);
+            data[i + 1] = Math.min(255, data[i + 1] + 80);
+            data[i + 2] = Math.min(255, data[i + 2] + 80);
+          }
+        }
+        break;
+    }
+  }
+
+  // Put pixel-manipulated data back
+  ctx.putImageData(imageData, 0, 0);
+
+  // Canvas API filters applied on top
+  for (const filter of state.filters) {
+    switch (filter) {
+      case 'blur':
+        // Re-draw with CSS filter blur
+        filterCtx.clearRect(0, 0, w, h);
+        filterCtx.filter = 'blur(3px)';
+        filterCtx.drawImage(canvas, 0, 0);
+        filterCtx.filter = 'none';
+        ctx.drawImage(filterCanvas, 0, 0);
+        break;
+
+      case 'glitch': {
+        // Horizontal scanline displacement
+        const numSlices = 10 + Math.random() * 10;
+        for (let i = 0; i < numSlices; i++) {
+          const sliceY = Math.random() * h;
+          const sliceH = 2 + Math.random() * 15;
+          const offset = (Math.random() - 0.5) * 30;
+          ctx.drawImage(canvas, 0, sliceY, w, sliceH, offset, sliceY, w, sliceH);
+        }
+        break;
+      }
+
+      case 'zoom': {
+        // Slight zoom pulse
+        const zf = 1 + 0.03 * Math.sin(Date.now() * 0.005);
+        filterCtx.clearRect(0, 0, w, h);
+        filterCtx.drawImage(canvas, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+        const dx = w * (1 - zf) / 2, dy = h * (1 - zf) / 2;
+        ctx.drawImage(filterCanvas, dx, dy, w * zf, h * zf);
+        break;
+      }
+
+      case 'water': {
+        // Wave distortion
+        const t = Date.now() * 0.003;
+        filterCtx.clearRect(0, 0, w, h);
+        filterCtx.drawImage(canvas, 0, 0);
+        const stripH = 4;
+        for (let sy = 0; sy < h; sy += stripH) {
+          const dx = Math.sin(sy * 0.02 + t) * 6;
+          ctx.drawImage(filterCanvas, 0, sy, w, stripH, dx, sy, w, stripH);
+        }
+        break;
+      }
+
+      case 'crt': {
+        // Scanline overlay
+        ctx.fillStyle = 'rgba(0,0,0,0.08)';
+        for (let sy = 0; sy < h; sy += 3) {
+          ctx.fillRect(0, sy, w, 1);
+        }
+        // Slight vignette
+        const vg = ctx.createRadialGradient(w / 2, h / 2, w * 0.3, w / 2, h / 2, w * 0.8);
+        vg.addColorStop(0, 'rgba(0,0,0,0)');
+        vg.addColorStop(1, 'rgba(0,0,0,0.4)');
+        ctx.fillStyle = vg;
+        ctx.fillRect(0, 0, w, h);
+        break;
+      }
+    }
+  }
+}
+
+// ── Draw Connections ──────────────────────────────────────────────────
+function drawConnections(ctx, blobs) {
+  ctx.save();
+  ctx.strokeStyle = state.color;
+  ctx.lineWidth = state.connWidth;
+  if (state.connDash) ctx.setLineDash([5, 5]);
+
+  if (state.connMode === 'mesh') {
+    // Connect nearby blobs
+    for (let i = 0; i < blobs.length; i++) {
+      for (let j = i + 1; j < blobs.length; j++) {
+        if (Math.random() > state.connRate) continue;
+        const a = blobs[i], b = blobs[j];
+        const ax = a.x + a.width / 2, ay = a.y + a.height / 2;
+        const bx = b.x + b.width / 2, by = b.y + b.height / 2;
+        ctx.beginPath();
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(bx, by);
+        ctx.stroke();
+      }
+    }
+  } else if (state.connMode === 'hub') {
+    // All connect to center (largest) blob
+    const hub = blobs[0];
+    const hx = hub.x + hub.width / 2, hy = hub.y + hub.height / 2;
+    for (let i = 1; i < blobs.length; i++) {
+      if (Math.random() > state.connRate) continue;
+      const b = blobs[i];
+      ctx.beginPath();
+      ctx.moveTo(hx, hy);
+      ctx.lineTo(b.x + b.width / 2, b.y + b.height / 2);
+      ctx.stroke();
+    }
+  }
+
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+// ── Draw Text on Blobs ────────────────────────────────────────────────
+function drawBlobText(ctx, blobs) {
+  ctx.save();
+  ctx.font = `bold ${state.fontSize}px monospace`;
+  ctx.fillStyle = state.color;
+  ctx.textAlign = 'center';
+
+  blobs.forEach((b, i) => {
+    let text = '';
+    switch (state.textContent) {
+      case 'random':
+        text = WORDS[i % WORDS.length];
+        break;
+      case 'position':
+        text = `${b.x | 0},${b.y | 0}`;
+        break;
+      case 'count':
+        text = '#' + (i + 1);
+        break;
+    }
+
+    const cx = b.x + b.width / 2;
+    let ty;
+    switch (state.textPosition) {
+      case 'top': ty = b.y - 6; break;
+      case 'bottom': ty = b.y + b.height + state.fontSize + 2; break;
+      default: ty = b.y + b.height / 2 + state.fontSize / 3; break;
+    }
+
+    if (state.separateColors) ctx.fillStyle = PALETTE[i % PALETTE.length];
+    if (state.crazy) {
+      const hue = (Date.now() * 0.5 + i * 60) % 360;
+      ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
+    }
+    ctx.fillText(text, cx, ty);
+  });
+
+  ctx.restore();
+}
+
+// ── Audio System ──────────────────────────────────────────────────────
+let lastBeepTime = 0;
+let birdOsc = null;
+
+function setAudio(mode) {
+  state.audioMode = mode;
+
+  // Stop any existing mic stream
+  if (state.micStream) {
+    state.micStream.getTracks().forEach(t => t.stop());
+    state.micStream = null;
+  }
+  if (state.customAudio) {
+    state.customAudio.pause();
+    state.customAudio = null;
+  }
+
+  if (mode === 'computer') {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+      state.micStream = stream;
+    }).catch(() => {});
+  }
+}
+
+function uploadAudio() {
+  audioInput.click();
+}
+audioInput.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const audio = new Audio(URL.createObjectURL(file));
+  audio.loop = true;
+  audio.play();
+  state.customAudio = audio;
+});
+
+function triggerAudio(blobs) {
+  if (blobs.length === 0) return;
+
+  if (state.audioMode === 'beep') {
+    const now = Date.now();
+    if (now - lastBeepTime < 200) return;
+    lastBeepTime = now;
+
+    if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = state.audioCtx.createOscillator();
+    const gain = state.audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = 800 + blobs.length * 50;
+    gain.gain.value = 0.05;
+    osc.connect(gain);
+    gain.connect(state.audioCtx.destination);
+    osc.start();
+    osc.stop(state.audioCtx.currentTime + 0.05);
+  }
+
+  if (state.audioMode === 'bird') {
+    const now = Date.now();
+    if (now - lastBeepTime < 500) return;
+    lastBeepTime = now;
+
+    if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = state.audioCtx.createOscillator();
+    const gain = state.audioCtx.createGain();
+    osc.type = 'sine';
+    // Bird chirp: frequency sweep
+    osc.frequency.setValueAtTime(2000 + Math.random() * 1000, state.audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800, state.audioCtx.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.08, state.audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 0.2);
+    osc.connect(gain);
+    gain.connect(state.audioCtx.destination);
+    osc.start();
+    osc.stop(state.audioCtx.currentTime + 0.2);
+  }
+}
+
+// ── Export Video ───────────────────────────────────────────────────────
+function exportVideo(format) {
+  if (state.recording) {
+    // Stop recording
+    state.recorder.stop();
+    state.recording = false;
+    return;
+  }
+
+  const mimeType = format === 'mp4'
+    ? (MediaRecorder.isTypeSupported('video/mp4;codecs=avc1') ? 'video/mp4;codecs=avc1' : 'video/webm;codecs=vp9')
+    : 'video/webm;codecs=vp9';
+
+  const hq = document.getElementById('hqExport').checked;
+  const bitrate = hq ? 8000000 : 2500000;
+
   const stream = canvas.captureStream(30);
-  const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
-    ? 'video/webm;codecs=vp9' : 'video/webm';
-  mediaRecorder = new MediaRecorder(stream, { mimeType });
+  const recorder = new MediaRecorder(stream, {
+    mimeType: MediaRecorder.isTypeSupported(mimeType) ? mimeType : 'video/webm',
+    videoBitsPerSecond: bitrate
+  });
 
-  mediaRecorder.ondataavailable = (e) => {
-    if (e.data.size > 0) recordedChunks.push(e.data);
-  };
-
-  mediaRecorder.onstop = () => {
-    const blob = new Blob(recordedChunks, { type: mimeType });
+  const chunks = [];
+  recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+  recorder.onstop = () => {
+    const blob = new Blob(chunks, { type: recorder.mimeType });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.download = `babytrack-${Date.now()}.webm`;
-    link.href = url;
-    link.click();
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `babytrack-export.${format === 'mp4' && recorder.mimeType.includes('mp4') ? 'mp4' : 'webm'}`;
+    a.click();
     URL.revokeObjectURL(url);
   };
 
-  mediaRecorder.start(100);
-  isRecording = true;
-  recordBtn.textContent = 'Stop';
-  recordBtn.classList.remove('btn-primary');
-  recordBtn.classList.add('btn-danger');
+  recorder.start();
+  state.recorder = recorder;
+  state.recording = true;
+
+  // Auto-stop after video duration (if video source) or 30s for camera
+  if (state.source === 'video' && video.duration && isFinite(video.duration)) {
+    setTimeout(() => {
+      if (state.recording) {
+        recorder.stop();
+        state.recording = false;
+      }
+    }, video.duration * 1000 / state.speed);
+  }
 }
 
-// =====================================================================
-//  BOOT
-// =====================================================================
-
-buildPaletteUI();
-bindControls();
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-initWebcam().then(() => requestAnimationFrame(render));
+// ── Init: set default active states ───────────────────────────────────
+document.getElementById('connOff').classList.add('active');
 </script>
 </body>
 </html>
