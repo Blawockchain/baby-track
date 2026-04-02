@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BabyTrack — Blob Tracking Visual Effects</title>
+<title>TRACKR — Visual Tracking Effects</title>
+<meta name="description" content="TRACKR — Real-time visual tracking effects tool">
 <style>
 /* ── Reset & Base ─────────────────────────────────────────────────────── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -20,7 +21,7 @@ body.light { background: #f0f0f0; color: #1a1a1a; }
 
 /* ── Sidebar ──────────────────────────────────────────────────────────── */
 #sidebar {
-  width: 320px; min-width: 320px; height: 100vh;
+  width: 280px; min-width: 280px; max-width: 280px; height: 100vh;
   overflow-y: auto; overflow-x: hidden;
   display: flex; flex-direction: column;
   z-index: 10;
@@ -31,47 +32,32 @@ body.light #sidebar { background: #e8e8e8; border-right: 1px solid #ccc; }
 #sidebar::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
 /* ── Sidebar Header ───────────────────────────────────────────────────── */
-.sidebar-header { padding: 12px 14px 0 14px; display: flex; flex-direction: column; gap: 8px; }
+.sidebar-header { padding: 10px 12px 0 12px; display: flex; flex-direction: column; gap: 6px; }
 .logo-row { display: flex; align-items: center; justify-content: space-between; }
 .logo {
-  font-family: 'Courier New', monospace;
-  font-size: 17px; font-weight: 900;
-  letter-spacing: 2px;
+  font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 15px; font-weight: 700;
+  letter-spacing: 3px;
 }
 body.dark .logo { color: #fff; }
 body.light .logo { color: #111; }
-.nav-links { display: flex; gap: 10px; }
-.nav-links a {
-  font-size: 10px; text-decoration: none;
-  letter-spacing: 0.5px; font-weight: 500;
-  transition: color 0.2s;
-}
-body.dark .nav-links a { color: #666; }
-body.light .nav-links a { color: #888; }
-.nav-links a:hover { color: #fff; }
-.notif-bar {
-  font-size: 10px; padding: 5px 10px;
-  border-radius: 4px; text-align: center; cursor: pointer;
-}
-body.dark .notif-bar { background: #1a1a2e; color: #7b7bff; }
-body.light .notif-bar { background: #d0d0ff; color: #3333aa; }
 
 /* ── Controls ─────────────────────────────────────────────────────────── */
-.controls { padding: 10px 14px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-.section { display: flex; flex-direction: column; gap: 5px; }
+.controls { padding: 8px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.section { display: flex; flex-direction: column; gap: 4px; }
 .section-label {
-  font-size: 10px; font-weight: 700;
+  font-size: 10px; font-weight: 600;
   letter-spacing: 1.5px; text-transform: uppercase;
-  padding-bottom: 3px;
-  margin-bottom: 2px;
+  padding-bottom: 2px;
+  margin-bottom: 1px;
 }
-body.dark .section-label { color: #555; border-bottom: 1px solid #1a1a1a; }
-body.light .section-label { color: #999; border-bottom: 1px solid #ccc; }
+body.dark .section-label { color: #444; border-bottom: 1px solid #181818; }
+body.light .section-label { color: #aaa; border-bottom: 1px solid #d0d0d0; }
 
-.btn-row { display: flex; gap: 4px; flex-wrap: wrap; }
+.btn-row { display: flex; gap: 3px; flex-wrap: wrap; align-items: center; }
 .btn {
-  padding: 5px 10px; border: none; border-radius: 4px;
-  font-size: 11px; font-weight: 600; cursor: pointer;
+  padding: 4px 8px; border: none; border-radius: 3px;
+  font-size: 10px; font-weight: 600; cursor: pointer;
   transition: all 0.15s; font-family: inherit;
 }
 body.dark .btn { background: #1a1a1a; color: #ccc; }
@@ -82,25 +68,37 @@ body.light .btn { background: #d5d5d5; color: #333; }
 .btn.primary:hover { background: #5050ff; }
 .btn.danger { background: #cc3333; color: #fff; }
 
-.btn-sm { padding: 3px 7px; font-size: 10px; }
+.row-label { font-size: 10px; color: #666; margin-right: 3px; white-space: nowrap; }
 
 input[type="range"] { width: 100%; accent-color: #4a4aff; }
 input[type="color"] {
-  width: 36px; height: 24px; border: none;
-  border-radius: 4px; cursor: pointer; background: none;
+  width: 30px; height: 22px; border: none;
+  border-radius: 3px; cursor: pointer; background: none;
 }
+input[type="text"].field {
+  padding: 3px 6px; border-radius: 3px; font-size: 11px;
+  font-family: inherit; width: 100%;
+}
+body.dark input[type="text"].field { background: #1a1a1a; color: #ccc; border: 1px solid #333; }
+body.light input[type="text"].field { background: #ddd; color: #333; border: 1px solid #bbb; }
 
 .toggle-row {
-  display: flex; align-items: center; gap: 8px; font-size: 11px;
+  display: flex; align-items: center; gap: 6px; font-size: 10px;
 }
 .toggle-row input[type="checkbox"] { accent-color: #4a4aff; }
 
 select {
-  padding: 4px 8px; border-radius: 4px; font-size: 11px;
+  padding: 3px 6px; border-radius: 3px; font-size: 10px;
   font-family: inherit; cursor: pointer;
 }
 body.dark select { background: #1a1a1a; color: #ccc; border: 1px solid #333; }
 body.light select { background: #ddd; color: #333; border: 1px solid #bbb; }
+
+.slider-row {
+  display: flex; align-items: center; gap: 6px; font-size: 10px;
+}
+.slider-row input[type="range"] { flex: 1; }
+.slider-row .slider-val { min-width: 28px; text-align: right; color: #888; font-size: 10px; }
 
 /* ── Main Area ────────────────────────────────────────────────────────── */
 #main {
@@ -117,7 +115,11 @@ body.light #main { background: #e0e0e0; }
 #placeholder {
   text-align: center; color: #444; font-size: 14px;
 }
-#placeholder h2 { font-size: 18px; margin-bottom: 8px; color: #666; }
+#placeholder h2 {
+  font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+  font-size: 18px; margin-bottom: 8px; color: #666;
+  letter-spacing: 3px;
+}
 
 /* Hidden elements */
 .hidden { display: none !important; }
@@ -130,201 +132,77 @@ video, #offscreen, #filterCanvas { display: none; }
 <div id="sidebar">
   <div class="sidebar-header">
     <div class="logo-row">
-      <span class="logo">BABYTRACK</span>
-      <div class="nav-links">
-        <a href="#">Membership</a>
-        <a href="#">Contact</a>
-        <a href="#">Tips</a>
-      </div>
+      <span class="logo">TRACKR</span>
+      <button class="btn" onclick="toggleTheme()" style="font-size:10px;">Theme</button>
     </div>
-    <div class="notif-bar">Try ImageTrack (Image Version) →</div>
   </div>
 
   <div class="controls">
-    <!-- Core Actions -->
+    <!-- VIDEO -->
     <div class="section">
-      <div class="section-label">Actions</div>
+      <div class="section-label">Video</div>
       <div class="btn-row">
-        <button class="btn primary" onclick="uploadVideo()">Upload Video</button>
-        <button class="btn primary" onclick="openCamera()">Open Camera</button>
+        <button class="btn primary" onclick="uploadVideo()">Upload</button>
+        <button class="btn primary" onclick="openCamera()">Camera</button>
       </div>
       <div class="btn-row">
-        <button class="btn" onclick="exportVideo('mp4')">Export MP4</button>
-        <button class="btn" onclick="exportVideo('webm')">Export WebM</button>
-        <div class="toggle-row" style="margin-left:6px;">
-          <input type="checkbox" id="hqExport"><label for="hqExport">HQ</label>
-        </div>
+        <span class="row-label">Speed:</span>
+        <button class="btn active" onclick="setSpeed(1,this)">1x</button>
+        <button class="btn" onclick="setSpeed(2,this)">2x</button>
+        <button class="btn" onclick="setSpeed(3,this)">3x</button>
+        <button class="btn" onclick="setSpeed(4,this)">4x</button>
+      </div>
+      <div class="slider-row">
+        <span class="row-label">Skip:</span>
+        <input type="range" id="perfSlider" min="0" max="4" value="0"
+          oninput="state.frameSkip=+this.value; this.nextElementSibling.textContent=this.value==0?'0':this.value">
+        <span class="slider-val">0</span>
       </div>
     </div>
 
-    <!-- Speed & Performance -->
+    <!-- TRACKING -->
     <div class="section">
-      <div class="section-label">Playback</div>
-      <div class="btn-row">
-        <span style="font-size:10px;color:#888;margin-right:4px;">Speed:</span>
-        <button class="btn btn-sm active" onclick="setSpeed(1,this)">1x</button>
-        <button class="btn btn-sm" onclick="setSpeed(2,this)">2x</button>
-        <button class="btn btn-sm" onclick="setSpeed(3,this)">3x</button>
-        <button class="btn btn-sm" onclick="setSpeed(4,this)">4x</button>
-      </div>
-      <div class="toggle-row">
-        <span style="font-size:10px;color:#888;">Performance:</span>
-        <input type="range" id="perfSlider" min="0" max="4" value="0" style="width:100px;"
-          oninput="state.frameSkip=+this.value; document.getElementById('perfLabel').textContent=this.value==0?'No Skip':'Skip '+this.value">
-        <span id="perfLabel" style="font-size:10px;">No Skip</span>
-      </div>
-    </div>
-
-    <!-- Blob Count & Size -->
-    <div class="section">
-      <div class="section-label">Blob Size & Count</div>
-      <div class="toggle-row">
-        <input type="checkbox" id="sameSize" onchange="state.sameSize=this.checked">
-        <label for="sameSize">Same Size</label>
+      <div class="section-label">Tracking</div>
+      <div class="slider-row">
+        <span class="row-label">Min Size:</span>
+        <input type="range" id="minSizeSlider" min="200" max="5000" value="1200"
+          oninput="state.minBlobArea=+this.value; this.nextElementSibling.textContent=this.value">
+        <span class="slider-val">1200</span>
       </div>
       <div class="btn-row">
-        <span style="font-size:10px;color:#888;margin-right:2px;">BBox:</span>
-        <button class="btn btn-sm" onclick="setBBox(0,this)">0</button>
-        <button class="btn btn-sm" onclick="setBBox(32,this)">32</button>
-        <button class="btn btn-sm active" onclick="setBBox(64,this)">64</button>
-        <button class="btn btn-sm" onclick="setBBox(128,this)">128</button>
-        <button class="btn btn-sm" onclick="setBBox(256,this)">256</button>
-        <button class="btn btn-sm" onclick="setBBox(512,this)">512</button>
-      </div>
-      <div class="btn-row">
-        <span style="font-size:10px;color:#888;margin-right:2px;">Mode:</span>
-        <button class="btn btn-sm active" id="modeSize" onclick="state.countMode='size';activate(this,'modeCount')">By Size</button>
-        <button class="btn btn-sm" id="modeCount" onclick="state.countMode='count';activate(this,'modeSize')">By Count</button>
-      </div>
-      <div class="btn-row">
-        <span style="font-size:10px;color:#888;margin-right:2px;">Count:</span>
-        <button class="btn btn-sm" onclick="setCount(16,this)">16</button>
-        <button class="btn btn-sm active" onclick="setCount(32,this)">32</button>
-        <button class="btn btn-sm" onclick="setCount(64,this)">64</button>
-        <button class="btn btn-sm" onclick="setCount(128,this)">128</button>
-        <button class="btn btn-sm" onclick="setCount(256,this)">256</button>
-        <button class="btn btn-sm" onclick="setCount(512,this)">512</button>
-      </div>
-    </div>
-
-    <!-- Shape & Region -->
-    <div class="section">
-      <div class="section-label">Shape & Region</div>
-      <div class="btn-row">
-        <button class="btn btn-sm active" onclick="setShape('square',this)">Square</button>
-        <button class="btn btn-sm" onclick="setShape('circle',this)">Circle</button>
-        <button class="btn btn-sm" onclick="setShape('rounded',this)">Rounded</button>
-      </div>
-      <div class="btn-row">
-        <span style="font-size:10px;color:#888;margin-right:2px;">Region:</span>
-        <select id="regionSelect" onchange="state.region=this.value">
-          <option value="box">Box</option>
-          <option value="fill">Fill</option>
-          <option value="outline">Outline</option>
-        </select>
-        <div class="toggle-row" style="margin-left:6px;">
-          <input type="checkbox" id="randomRegion" onchange="state.randomRegion=this.checked">
-          <label for="randomRegion">Random</label>
-        </div>
-      </div>
-    </div>
-
-    <!-- Basic Effects -->
-    <div class="section">
-      <div class="section-label">Basic Effects</div>
-      <div class="btn-row">
-        <button class="btn btn-sm active" onclick="setEffect('basic',this)">Basic</button>
-        <button class="btn btn-sm" onclick="setEffect('label',this)">Label</button>
-        <button class="btn btn-sm" onclick="setEffect('frame',this)">Frame</button>
-        <button class="btn btn-sm" onclick="setEffect('lframe',this)">L-Frame</button>
-        <button class="btn btn-sm" onclick="setEffect('xframe',this)">X-Frame</button>
-        <button class="btn btn-sm" onclick="setEffect('grid',this)">Grid</button>
-        <button class="btn btn-sm" onclick="setEffect('particle',this)">Particle</button>
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-sm" onclick="setEffect('dash',this)">Dash</button>
-        <button class="btn btn-sm" onclick="setEffect('scope',this)">Scope</button>
-        <button class="btn btn-sm" onclick="setEffect('win2k',this)">Win2K</button>
-        <button class="btn btn-sm" onclick="setEffect('label2',this)">Label2</button>
-        <button class="btn btn-sm" onclick="setEffect('glow',this)">Glow</button>
-        <button class="btn btn-sm" onclick="setEffect('backdrop',this)">Backdrop</button>
-      </div>
-    </div>
-
-    <!-- Filter Effects -->
-    <div class="section">
-      <div class="section-label">Filter Effects</div>
-      <div class="btn-row">
-        <button class="btn btn-sm" onclick="toggleFilter('invert',this)">Invert</button>
-        <button class="btn btn-sm" onclick="toggleFilter('fusion',this)">Fusion</button>
-        <button class="btn btn-sm" onclick="toggleFilter('glitch',this)">Glitch</button>
-        <button class="btn btn-sm" onclick="toggleFilter('thermal',this)">Thermal</button>
-        <button class="btn btn-sm" onclick="toggleFilter('pixel',this)">Pixel</button>
-        <button class="btn btn-sm" onclick="toggleFilter('tone',this)">Tone</button>
-        <button class="btn btn-sm" onclick="toggleFilter('blur',this)">Blur</button>
-        <button class="btn btn-sm" onclick="toggleFilter('dither',this)">Dither</button>
-      </div>
-      <div class="btn-row">
-        <button class="btn btn-sm" onclick="toggleFilter('zoom',this)">Zoom</button>
-        <button class="btn btn-sm" onclick="toggleFilter('xray',this)">X-Ray</button>
-        <button class="btn btn-sm" onclick="toggleFilter('water',this)">Water</button>
-        <button class="btn btn-sm" onclick="toggleFilter('mask',this)">Mask</button>
-        <button class="btn btn-sm" onclick="toggleFilter('crt',this)">CRT</button>
-        <button class="btn btn-sm" onclick="toggleFilter('edge',this)">Edge</button>
-        <button class="btn btn-sm" onclick="toggleFilter('blink',this)">Blink</button>
-      </div>
-    </div>
-
-    <!-- Connection System -->
-    <div class="section">
-      <div class="section-label">Connections</div>
-      <div class="btn-row">
-        <button class="btn btn-sm" id="connOff" onclick="setConn('off',this)">Off</button>
-        <button class="btn btn-sm" id="connMesh" onclick="setConn('mesh',this)">Connection</button>
-        <button class="btn btn-sm" id="connHub" onclick="setConn('hub',this)">Center Hub</button>
-      </div>
-      <div class="btn-row">
-        <span style="font-size:10px;color:#888;">Line:</span>
-        <button class="btn btn-sm active" onclick="state.connDash=false;activate(this)">Solid</button>
-        <button class="btn btn-sm" onclick="state.connDash=true;activate(this)">Dashed</button>
-      </div>
-      <div class="btn-row">
-        <span style="font-size:10px;color:#888;">Rate:</span>
-        <button class="btn btn-sm" onclick="setConnRate(0,this)">0</button>
-        <button class="btn btn-sm" onclick="setConnRate(0.25,this)">0.25</button>
-        <button class="btn btn-sm active" onclick="setConnRate(0.5,this)">0.5</button>
-        <button class="btn btn-sm" onclick="setConnRate(0.75,this)">0.75</button>
-        <button class="btn btn-sm" onclick="setConnRate(1,this)">1</button>
-      </div>
-      <div class="btn-row">
-        <span style="font-size:10px;color:#888;">Width:</span>
-        <button class="btn btn-sm active" onclick="state.connWidth=1;activate(this)">1px</button>
-        <button class="btn btn-sm" onclick="state.connWidth=2;activate(this)">2px</button>
-        <button class="btn btn-sm" onclick="state.connWidth=3;activate(this)">3px</button>
-      </div>
-    </div>
-
-    <!-- Audio -->
-    <div class="section">
-      <div class="section-label">Audio</div>
-      <div class="btn-row">
-        <select id="audioSelect" onchange="setAudio(this.value)">
-          <option value="none">None</option>
-          <option value="computer">Computer (Mic)</option>
-          <option value="beep">Beep</option>
-          <option value="bird">Bird</option>
-        </select>
-        <button class="btn btn-sm" onclick="uploadAudio()">Upload Audio</button>
+        <span class="row-label">Max:</span>
+        <button class="btn" onclick="setMaxBlobs(3,this)">3</button>
+        <button class="btn active" onclick="setMaxBlobs(8,this)">8</button>
+        <button class="btn" onclick="setMaxBlobs(15,this)">15</button>
+        <button class="btn" onclick="setMaxBlobs(30,this)">30</button>
       </div>
       <div class="toggle-row">
         <input type="checkbox" id="singleTrack" onchange="state.singleTracking=this.checked">
         <label for="singleTrack">Single Tracking</label>
       </div>
+      <div class="toggle-row">
+        <input type="checkbox" id="sameSize" onchange="state.sameSize=this.checked">
+        <label for="sameSize">Same Size</label>
+      </div>
     </div>
 
-    <!-- Color & Text -->
+    <!-- DISPLAY -->
     <div class="section">
-      <div class="section-label">Color & Text</div>
+      <div class="section-label">Display</div>
+      <div class="btn-row">
+        <span class="row-label">Shape:</span>
+        <button class="btn active" onclick="setShape('square',this)">&#9633;</button>
+        <button class="btn" onclick="setShape('circle',this)">&#9675;</button>
+        <button class="btn" onclick="setShape('rounded',this)">&#9645;</button>
+      </div>
+      <div class="btn-row">
+        <span class="row-label">Region:</span>
+        <select id="regionSelect" onchange="state.region=this.value">
+          <option value="box">Box</option>
+          <option value="fill">Fill</option>
+          <option value="outline">Outline</option>
+        </select>
+      </div>
       <div class="btn-row">
         <input type="color" id="colorPicker" value="#00ff88" onchange="state.color=this.value">
         <div class="toggle-row">
@@ -336,36 +214,103 @@ video, #offscreen, #filterCanvas { display: none; }
           <label for="crazyColors">Crazy</label>
         </div>
       </div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <span class="row-label">Label:</span>
+        <input type="text" class="field" id="labelField" placeholder="(empty = no label)" oninput="state.labelText=this.value">
+      </div>
       <div class="btn-row">
-        <div class="toggle-row">
-          <input type="checkbox" id="showText" onchange="state.showText=this.checked" checked>
-          <label for="showText">Text</label>
-        </div>
+        <span class="row-label">Font:</span>
+        <button class="btn" onclick="setFont(10,this)">10</button>
+        <button class="btn active" onclick="setFont(12,this)">12</button>
+        <button class="btn" onclick="setFont(16,this)">16</button>
+        <button class="btn" onclick="setFont(20,this)">20</button>
+      </div>
+      <div class="btn-row">
+        <span class="row-label">Pos:</span>
         <select id="textPos" onchange="state.textPosition=this.value">
           <option value="center">Center</option>
           <option value="top">Top</option>
           <option value="bottom">Bottom</option>
         </select>
-        <select id="textContent" onchange="state.textContent=this.value">
-          <option value="random">Random</option>
-          <option value="position">Position</option>
-          <option value="count">Count</option>
-        </select>
-      </div>
-      <div class="btn-row">
-        <span style="font-size:10px;color:#888;">Font:</span>
-        <button class="btn btn-sm" onclick="setFont(10,this)">10</button>
-        <button class="btn btn-sm active" onclick="setFont(12,this)">12</button>
-        <button class="btn btn-sm" onclick="setFont(16,this)">16</button>
-        <button class="btn btn-sm" onclick="setFont(18,this)">18</button>
-        <button class="btn btn-sm" onclick="setFont(20,this)">20</button>
       </div>
     </div>
 
-    <!-- Theme -->
+    <!-- EFFECTS -->
     <div class="section">
-      <div class="section-label">Theme</div>
-      <button class="btn btn-sm" onclick="toggleTheme()">Toggle Light/Dark</button>
+      <div class="section-label">Effects</div>
+      <div class="btn-row">
+        <button class="btn active" onclick="setEffect('basic',this)">Basic</button>
+        <button class="btn" onclick="setEffect('label',this)">Label</button>
+        <button class="btn" onclick="setEffect('frame',this)">Frame</button>
+        <button class="btn" onclick="setEffect('lframe',this)">L-Frame</button>
+        <button class="btn" onclick="setEffect('xframe',this)">X-Frame</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="setEffect('grid',this)">Grid</button>
+        <button class="btn" onclick="setEffect('particle',this)">Particle</button>
+        <button class="btn" onclick="setEffect('dash',this)">Dash</button>
+        <button class="btn" onclick="setEffect('scope',this)">Scope</button>
+        <button class="btn" onclick="setEffect('glow',this)">Glow</button>
+      </div>
+
+      <div class="btn-row" style="margin-top:4px;">
+        <span class="row-label">Filters:</span>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="toggleFilter('invert',this)">Invert</button>
+        <button class="btn" onclick="toggleFilter('fusion',this)">Fusion</button>
+        <button class="btn" onclick="toggleFilter('glitch',this)">Glitch</button>
+        <button class="btn" onclick="toggleFilter('thermal',this)">Thermal</button>
+        <button class="btn" onclick="toggleFilter('pixel',this)">Pixel</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="toggleFilter('tone',this)">Tone</button>
+        <button class="btn" onclick="toggleFilter('blur',this)">Blur</button>
+        <button class="btn" onclick="toggleFilter('dither',this)">Dither</button>
+        <button class="btn" onclick="toggleFilter('zoom',this)">Zoom</button>
+        <button class="btn" onclick="toggleFilter('xray',this)">X-Ray</button>
+      </div>
+      <div class="btn-row">
+        <button class="btn" onclick="toggleFilter('water',this)">Water</button>
+        <button class="btn" onclick="toggleFilter('mask',this)">Mask</button>
+        <button class="btn" onclick="toggleFilter('crt',this)">CRT</button>
+        <button class="btn" onclick="toggleFilter('edge',this)">Edge</button>
+        <button class="btn" onclick="toggleFilter('blink',this)">Blink</button>
+      </div>
+
+      <div class="btn-row" style="margin-top:4px;">
+        <span class="row-label">Connect:</span>
+        <button class="btn active" id="connOff" onclick="setConn('off',this)">Off</button>
+        <button class="btn" id="connMesh" onclick="setConn('mesh',this)">Mesh</button>
+        <button class="btn" id="connHub" onclick="setConn('hub',this)">Hub</button>
+      </div>
+      <div class="btn-row">
+        <span class="row-label">Line:</span>
+        <button class="btn active" onclick="state.connDash=false;activate(this)">Solid</button>
+        <button class="btn" onclick="state.connDash=true;activate(this)">Dashed</button>
+        <span class="row-label" style="margin-left:4px;">W:</span>
+        <button class="btn active" onclick="state.connWidth=1;activate(this)">1</button>
+        <button class="btn" onclick="state.connWidth=2;activate(this)">2</button>
+        <button class="btn" onclick="state.connWidth=3;activate(this)">3</button>
+      </div>
+      <div class="slider-row">
+        <span class="row-label">Rate:</span>
+        <input type="range" min="0" max="100" value="50"
+          oninput="state.connRate=this.value/100; this.nextElementSibling.textContent=(this.value/100).toFixed(2)">
+        <span class="slider-val">0.50</span>
+      </div>
+    </div>
+
+    <!-- EXPORT -->
+    <div class="section">
+      <div class="section-label">Export</div>
+      <div class="btn-row">
+        <button class="btn primary" onclick="exportVideo('mp4')">MP4</button>
+        <button class="btn primary" onclick="exportVideo('webm')">WebM</button>
+        <div class="toggle-row" style="margin-left:4px;">
+          <input type="checkbox" id="hqExport"><label for="hqExport">HQ</label>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -373,7 +318,7 @@ video, #offscreen, #filterCanvas { display: none; }
 <!-- ── Main Area ────────────────────────────────────────────────────── -->
 <div id="main">
   <div id="placeholder">
-    <h2>BABYTRACK</h2>
+    <h2>TRACKR</h2>
     <p>Upload a video or open camera to start tracking</p>
   </div>
   <canvas id="display-canvas" class="hidden"></canvas>
@@ -385,18 +330,17 @@ video, #offscreen, #filterCanvas { display: none; }
 <canvas id="offscreen"></canvas>
 <canvas id="filterCanvas"></canvas>
 <input type="file" id="videoInput" accept="video/*" class="hidden">
-<input type="file" id="audioInput" accept="audio/*" class="hidden">
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════════
-   BabyTrack — Blob Tracking Visual Effects Tool
+   TRACKR — Visual Tracking Effects Tool
    Zero-dependency, single-file implementation
    ═══════════════════════════════════════════════════════════════════════ */
 
 // ── Global State ──────────────────────────────────────────────────────
 const state = {
   // Source
-  source: null,        // 'video' or 'camera'
+  source: null,
   playing: false,
   speed: 1,
   frameSkip: 0,
@@ -404,46 +348,40 @@ const state = {
 
   // Blob detection
   threshold: 128,
-  minBlobSize: 64,
+  minBlobArea: 1200,   // min area in detection-canvas px²
   sameSize: false,
-  countMode: 'size',   // 'size' or 'count'
-  maxBlobs: 32,
+  maxBlobs: 8,
 
   // Shape / Region
-  shape: 'square',     // 'square', 'circle', 'rounded'
+  shape: 'square',
   region: 'box',
-  randomRegion: false,
 
   // Effect
   effect: 'basic',
   filters: new Set(),
 
   // Connection
-  connMode: 'off',     // 'off', 'mesh', 'hub'
+  connMode: 'off',
   connDash: false,
   connRate: 0.5,
   connWidth: 1,
-
-  // Audio
-  audioMode: 'none',
-  micStream: null,
-  audioCtx: null,
-  customAudio: null,
-  singleTracking: false,
 
   // Color / Text
   color: '#00ff88',
   separateColors: false,
   crazy: false,
-  showText: true,
+  labelText: '',
   textPosition: 'center',
-  textContent: 'random',
   fontSize: 12,
 
   // Export
   hqExport: false,
   recorder: null,
   recording: false,
+
+  // Audio (kept minimal)
+  audioMode: 'none',
+  singleTracking: false,
 
   // Internal tracking
   blobs: [],
@@ -459,12 +397,6 @@ const PALETTE = [
   '#8844ff'
 ];
 
-// Random words for label text
-const WORDS = [
-  'blob', 'object', 'target', 'entity', 'node', 'unit',
-  'item', 'point', 'zone', 'mark', 'ping', 'spot'
-];
-
 // ── DOM References ────────────────────────────────────────────────────
 const video = document.getElementById('video');
 const canvas = document.getElementById('display-canvas');
@@ -475,7 +407,6 @@ const filterCanvas = document.getElementById('filterCanvas');
 const filterCtx = filterCanvas.getContext('2d', { willReadFrequently: true });
 const placeholder = document.getElementById('placeholder');
 const videoInput = document.getElementById('videoInput');
-const audioInput = document.getElementById('audioInput');
 
 // Detection resolution (downscaled for performance)
 const DW = 160, DH = 120;
@@ -484,7 +415,6 @@ offscreen.height = DH;
 
 // ── Utility: activate button in a row ─────────────────────────────────
 function activate(btn, ...deactivateIds) {
-  // Deactivate siblings in same btn-row
   if (btn.parentElement) {
     btn.parentElement.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
   }
@@ -497,16 +427,17 @@ function activate(btn, ...deactivateIds) {
 
 // ── Control Setters ───────────────────────────────────────────────────
 function setSpeed(s, btn) { state.speed = s; video.playbackRate = s; activate(btn); }
-function setBBox(v, btn) { state.minBlobSize = v; activate(btn); }
-function setCount(v, btn) { state.maxBlobs = v; activate(btn); }
+function setMaxBlobs(v, btn) { state.maxBlobs = v; activate(btn); }
 function setShape(s, btn) { state.shape = s; activate(btn); }
 
 function setEffect(e, btn) {
   state.effect = e;
-  // Deactivate all effect buttons
   document.querySelectorAll('.section').forEach(sec => {
-    if (sec.querySelector('.section-label')?.textContent === 'Basic Effects') {
-      sec.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+    if (sec.querySelector('.section-label')?.textContent === 'Effects') {
+      // Only deactivate the first two btn-rows (effect buttons, not filters)
+      const rows = sec.querySelectorAll('.btn-row');
+      rows[0]?.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+      rows[1]?.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
     }
   });
   btn.classList.add('active');
@@ -530,7 +461,6 @@ function setConn(mode, btn) {
   btn.classList.add('active');
 }
 
-function setConnRate(r, btn) { state.connRate = r; activate(btn); }
 function setFont(s, btn) { state.fontSize = s; activate(btn); }
 
 function toggleTheme() {
@@ -602,7 +532,6 @@ function renderLoop() {
   requestAnimationFrame(renderLoop);
 
   state.frameCount++;
-  // Frame skip for performance
   if (state.frameSkip > 0 && state.frameCount % (state.frameSkip + 1) !== 0) return;
 
   syncCanvasSize();
@@ -626,11 +555,6 @@ function renderLoop() {
     score: b.score
   }));
 
-  // Apply count limits
-  if (state.countMode === 'count') {
-    scaledBlobs = scaledBlobs.slice(0, state.maxBlobs);
-  }
-
   // Same size
   if (state.sameSize && scaledBlobs.length > 0) {
     const avgW = scaledBlobs.reduce((s, b) => s + b.width, 0) / scaledBlobs.length;
@@ -647,7 +571,7 @@ function renderLoop() {
   // Smooth blobs with lerp + nearest-neighbor matching
   smoothBlobs(scaledBlobs);
 
-  // Apply filter effects (post-processing on the video frame before overlays)
+  // Apply filter effects
   if (state.filters.size > 0) {
     applyFilters(ctx, w, h);
   }
@@ -663,36 +587,53 @@ function renderLoop() {
     drawConnections(ctx, state.smoothBlobs);
   }
 
-  // Draw text
-  if (state.showText) {
+  // Draw label text (only if label field is non-empty)
+  if (state.labelText.trim()) {
     drawBlobText(ctx, state.smoothBlobs);
   }
 
-  // Audio trigger
-  triggerAudio(state.smoothBlobs);
-
   state.particlePhase += 0.05;
+}
+
+// ── Box blur helper for detection ─────────────────────────────────────
+function boxBlur(bright, w, h) {
+  const out = new Uint8Array(w * h);
+  for (let y = 1; y < h - 1; y++) {
+    for (let x = 1; x < w - 1; x++) {
+      let sum = 0;
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          sum += bright[(y + dy) * w + (x + dx)];
+        }
+      }
+      out[y * w + x] = sum >= 5 ? 1 : 0; // majority vote
+    }
+  }
+  return out;
 }
 
 // ── Blob Detection (brightness threshold + connected components) ──────
 function detectBlobs(imgData, w, h) {
   const data = imgData.data;
-  const visited = new Uint8Array(w * h);
   const blobs = [];
 
   // Create brightness map
-  const bright = new Uint8Array(w * h);
+  let bright = new Uint8Array(w * h);
   for (let i = 0; i < w * h; i++) {
     const idx = i * 4;
     bright[i] = (data[idx] * 0.299 + data[idx + 1] * 0.587 + data[idx + 2] * 0.114) > state.threshold ? 1 : 0;
   }
 
+  // Apply 3x3 box blur (majority vote smoothing) twice for noise reduction
+  bright = boxBlur(bright, w, h);
+  bright = boxBlur(bright, w, h);
+
   // Connected components via flood fill
+  const visited = new Uint8Array(w * h);
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
       const pos = y * w + x;
       if (bright[pos] && !visited[pos]) {
-        // BFS flood fill
         const queue = [pos];
         visited[pos] = 1;
         let minX = x, maxX = x, minY = y, maxY = y;
@@ -710,10 +651,7 @@ function detectBlobs(imgData, w, h) {
           if (py < minY) minY = py;
           if (py > maxY) maxY = py;
 
-          // 4-connectivity neighbors
-          const neighbors = [
-            p - 1, p + 1, p - w, p + w
-          ];
+          const neighbors = [p - 1, p + 1, p - w, p + w];
           for (const n of neighbors) {
             if (n >= 0 && n < w * h && !visited[n] && bright[n]) {
               visited[n] = 1;
@@ -724,33 +662,63 @@ function detectBlobs(imgData, w, h) {
 
         const bw = maxX - minX + 1;
         const bh = maxY - minY + 1;
-        // Filter by minimum blob size
-        if (bw >= 2 && bh >= 2 && count >= 4) {
+        const area = bw * bh;
+        // Filter by minimum blob area on detection canvas
+        // state.minBlobArea is in display px²; scale down to detection canvas
+        const scaleX = (canvas.width || 640) / DW;
+        const scaleY = (canvas.height || 480) / DH;
+        const minAreaDetect = state.minBlobArea / (scaleX * scaleY);
+        if (area >= minAreaDetect && count >= minAreaDetect * 0.3) {
           blobs.push({
-            x: minX,
-            y: minY,
-            width: bw,
-            height: bh,
-            score: Math.min(1, count / (bw * bh))
+            x: minX, y: minY, width: bw, height: bh,
+            cx: (minX + maxX) / 2, cy: (minY + maxY) / 2,
+            area: area,
+            score: Math.min(1, count / area)
           });
         }
       }
     }
   }
 
-  // Sort by area descending, limit count
-  blobs.sort((a, b) => (b.width * b.height) - (a.width * a.height));
+  // Sort by area descending
+  blobs.sort((a, b) => b.area - a.area);
 
-  // Filter by minimum bounding box size
-  const minSize = state.minBlobSize / (canvas.width / DW);
-  const filtered = blobs.filter(b => b.width >= minSize || b.height >= minSize);
+  // Merge nearby blobs (within 20 display px → scale to detection px)
+  const mergeDistDetect = 20 / ((canvas.width || 640) / DW);
+  const merged = [];
+  const used = new Set();
+  for (let i = 0; i < blobs.length; i++) {
+    if (used.has(i)) continue;
+    let b = { ...blobs[i] };
+    for (let j = i + 1; j < blobs.length; j++) {
+      if (used.has(j)) continue;
+      const dx = b.cx - blobs[j].cx;
+      const dy = b.cy - blobs[j].cy;
+      if (Math.sqrt(dx * dx + dy * dy) < mergeDistDetect) {
+        // Merge: expand bounding box
+        const nx = Math.min(b.x, blobs[j].x);
+        const ny = Math.min(b.y, blobs[j].y);
+        const nx2 = Math.max(b.x + b.width, blobs[j].x + blobs[j].width);
+        const ny2 = Math.max(b.y + b.height, blobs[j].y + blobs[j].height);
+        b.x = nx; b.y = ny;
+        b.width = nx2 - nx; b.height = ny2 - ny;
+        b.cx = (nx + nx2) / 2; b.cy = (ny + ny2) / 2;
+        b.area = b.width * b.height;
+        b.score = Math.max(b.score, blobs[j].score);
+        used.add(j);
+      }
+    }
+    merged.push(b);
+  }
 
-  return filtered.slice(0, state.maxBlobs);
+  // Re-sort merged by area and limit
+  merged.sort((a, b) => b.area - a.area);
+  return merged.slice(0, state.maxBlobs);
 }
 
 // ── Smooth blob tracking (lerp + nearest neighbor matching) ───────────
 function smoothBlobs(newBlobs) {
-  const lerp = 0.3;
+  const lerp = 0.25;  // slower, more stable
   const maxDist = 200;
 
   if (state.smoothBlobs.length === 0) {
@@ -761,7 +729,6 @@ function smoothBlobs(newBlobs) {
   const matched = new Set();
   const updated = [];
 
-  // Match each new blob to nearest existing smooth blob
   for (const nb of newBlobs) {
     let bestIdx = -1, bestDist = Infinity;
     const ncx = nb.x + nb.width / 2, ncy = nb.y + nb.height / 2;
@@ -809,19 +776,25 @@ function shapePath(ctx, x, y, w, h) {
     ctx.beginPath();
     ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, Math.PI * 2);
   } else if (state.shape === 'rounded') {
-    const r = Math.min(w, h) * 0.15;
+    const r = 12;
     ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + w - r, y);
-    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-    ctx.lineTo(x + w, y + h - r);
-    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-    ctx.lineTo(x + r, y + h);
-    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-    ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y);
-    ctx.closePath();
+    if (ctx.roundRect) {
+      ctx.roundRect(x, y, w, h, r);
+    } else {
+      // Fallback for browsers without roundRect
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
   } else {
+    // square — plain rectangle
     ctx.beginPath();
     ctx.rect(x, y, w, h);
   }
@@ -840,8 +813,6 @@ function drawBlobEffect(ctx, blob, index, color, cw, ch) {
     case 'basic':
       shapePath(ctx, x, y, bw, bh);
       ctx.stroke();
-      ctx.font = '10px monospace';
-      ctx.fillText((score * 100 | 0) + '%', x, y - 4);
       break;
 
     case 'label':
@@ -857,13 +828,9 @@ function drawBlobEffect(ctx, blob, index, color, cw, ch) {
     case 'frame': {
       const corner = Math.min(bw, bh) * 0.3;
       ctx.lineWidth = 3;
-      // Top-left
       ctx.beginPath(); ctx.moveTo(x, y + corner); ctx.lineTo(x, y); ctx.lineTo(x + corner, y); ctx.stroke();
-      // Top-right
       ctx.beginPath(); ctx.moveTo(x + bw - corner, y); ctx.lineTo(x + bw, y); ctx.lineTo(x + bw, y + corner); ctx.stroke();
-      // Bottom-left
       ctx.beginPath(); ctx.moveTo(x, y + bh - corner); ctx.lineTo(x, y + bh); ctx.lineTo(x + corner, y + bh); ctx.stroke();
-      // Bottom-right
       ctx.beginPath(); ctx.moveTo(x + bw - corner, y + bh); ctx.lineTo(x + bw, y + bh); ctx.lineTo(x + bw, y + bh - corner); ctx.stroke();
       break;
     }
@@ -871,17 +838,12 @@ function drawBlobEffect(ctx, blob, index, color, cw, ch) {
     case 'lframe': {
       const cl = Math.min(bw, bh) * 0.25;
       ctx.lineWidth = 2;
-      // Only L-shaped corners (two lines each)
-      // Top-left
       ctx.beginPath(); ctx.moveTo(x, y + cl); ctx.lineTo(x, y); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + cl, y); ctx.stroke();
-      // Top-right
       ctx.beginPath(); ctx.moveTo(x + bw, y + cl); ctx.lineTo(x + bw, y); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(x + bw, y); ctx.lineTo(x + bw - cl, y); ctx.stroke();
-      // Bottom-left
       ctx.beginPath(); ctx.moveTo(x, y + bh - cl); ctx.lineTo(x, y + bh); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(x, y + bh); ctx.lineTo(x + cl, y + bh); ctx.stroke();
-      // Bottom-right
       ctx.beginPath(); ctx.moveTo(x + bw, y + bh - cl); ctx.lineTo(x + bw, y + bh); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(x + bw, y + bh); ctx.lineTo(x + bw - cl, y + bh); ctx.stroke();
       break;
@@ -890,7 +852,6 @@ function drawBlobEffect(ctx, blob, index, color, cw, ch) {
     case 'xframe':
       shapePath(ctx, x, y, bw, bh);
       ctx.stroke();
-      // X lines
       ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + bw, y + bh); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(x + bw, y); ctx.lineTo(x, y + bh); ctx.stroke();
       break;
@@ -922,7 +883,6 @@ function drawBlobEffect(ctx, blob, index, color, cw, ch) {
         ctx.arc(px, py, 3, 0, Math.PI * 2);
         ctx.fill();
       }
-      // Center dot
       ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2); ctx.fill();
       break;
     }
@@ -935,71 +895,19 @@ function drawBlobEffect(ctx, blob, index, color, cw, ch) {
       break;
 
     case 'scope': {
-      // Crosshair / scope reticle
       const r = Math.max(bw, bh) * 0.5;
       ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
       ctx.beginPath(); ctx.arc(cx, cy, r * 0.5, 0, Math.PI * 2); ctx.stroke();
-      // Cross lines
       ctx.beginPath(); ctx.moveTo(cx - r * 1.2, cy); ctx.lineTo(cx + r * 1.2, cy); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(cx, cy - r * 1.2); ctx.lineTo(cx, cy + r * 1.2); ctx.stroke();
-      // Tick marks
       for (let i = -1; i <= 1; i += 2) {
-        ctx.beginPath();
-        ctx.moveTo(cx + r * 0.7 * i, cy - 4);
-        ctx.lineTo(cx + r * 0.7 * i, cy + 4);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(cx - 4, cy + r * 0.7 * i);
-        ctx.lineTo(cx + 4, cy + r * 0.7 * i);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx + r * 0.7 * i, cy - 4); ctx.lineTo(cx + r * 0.7 * i, cy + 4); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx - 4, cy + r * 0.7 * i); ctx.lineTo(cx + 4, cy + r * 0.7 * i); ctx.stroke();
       }
       break;
     }
 
-    case 'win2k': {
-      // Windows 2000 style dialog box
-      const titleH = 18;
-      // Outer border (raised effect)
-      ctx.fillStyle = '#c0c0c0';
-      ctx.fillRect(x, y, bw, bh);
-      // Title bar
-      ctx.fillStyle = '#000080';
-      ctx.fillRect(x + 2, y + 2, bw - 4, titleH);
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 11px "Courier New", monospace';
-      ctx.fillText('blob_' + (index + 1) + '.exe', x + 5, y + 15);
-      // Close button
-      ctx.fillStyle = '#c0c0c0';
-      ctx.fillRect(x + bw - 18, y + 3, 14, 14);
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(x + bw - 18, y + 3, 14, 14);
-      ctx.beginPath(); ctx.moveTo(x + bw - 15, y + 6); ctx.lineTo(x + bw - 7, y + 14); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(x + bw - 7, y + 6); ctx.lineTo(x + bw - 15, y + 14); ctx.stroke();
-      // Border lines
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(x, y + bh); ctx.lineTo(x, y); ctx.lineTo(x + bw, y); ctx.stroke();
-      ctx.strokeStyle = '#808080';
-      ctx.beginPath(); ctx.moveTo(x + bw, y); ctx.lineTo(x + bw, y + bh); ctx.lineTo(x, y + bh); ctx.stroke();
-      break;
-    }
-
-    case 'label2':
-      shapePath(ctx, x, y, bw, bh);
-      ctx.stroke();
-      // Label below the box
-      ctx.fillStyle = color;
-      ctx.globalAlpha = 0.85;
-      ctx.fillRect(x, y + bh + 2, bw, 18);
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = '#000';
-      ctx.font = 'bold 10px monospace';
-      ctx.fillText('ID:' + (index + 1) + ' ' + (score * 100 | 0) + '%', x + 3, y + bh + 14);
-      break;
-
     case 'glow': {
-      // Glowing halo
       const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(bw, bh) * 0.8);
       gradient.addColorStop(0, color + '66');
       gradient.addColorStop(0.5, color + '33');
@@ -1008,24 +916,12 @@ function drawBlobEffect(ctx, blob, index, color, cw, ch) {
       ctx.beginPath();
       ctx.ellipse(cx, cy, bw * 0.8, bh * 0.8, 0, 0, Math.PI * 2);
       ctx.fill();
-      // Inner ring
       ctx.strokeStyle = color;
       ctx.lineWidth = 2;
       shapePath(ctx, x, y, bw, bh);
       ctx.stroke();
       break;
     }
-
-    case 'backdrop':
-      ctx.globalAlpha = 0.3;
-      ctx.fillStyle = color;
-      shapePath(ctx, x, y, bw, bh);
-      ctx.fill();
-      ctx.globalAlpha = 1;
-      ctx.strokeStyle = color;
-      shapePath(ctx, x, y, bw, bh);
-      ctx.stroke();
-      break;
   }
 
   ctx.restore();
@@ -1050,7 +946,6 @@ function applyFilters(ctx, w, h) {
       case 'thermal':
         for (let i = 0; i < len; i += 4) {
           const v = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114);
-          // Heat map LUT
           if (v < 85) {
             data[i] = 0; data[i + 1] = 0; data[i + 2] = v * 3;
           } else if (v < 170) {
@@ -1062,7 +957,7 @@ function applyFilters(ctx, w, h) {
         break;
 
       case 'pixel': {
-        const ps = 8; // pixel size
+        const ps = 8;
         for (let py = 0; py < h; py += ps) {
           for (let px = 0; px < w; px += ps) {
             const idx = (py * w + px) * 4;
@@ -1079,7 +974,6 @@ function applyFilters(ctx, w, h) {
       }
 
       case 'tone':
-        // Sepia tone
         for (let i = 0; i < len; i += 4) {
           const r = data[i], g = data[i + 1], b = data[i + 2];
           data[i] = Math.min(255, r * 0.393 + g * 0.769 + b * 0.189);
@@ -1089,12 +983,9 @@ function applyFilters(ctx, w, h) {
         break;
 
       case 'dither': {
-        // Ordered 4x4 Bayer dither
         const bayer = [
-          [0, 8, 2, 10],
-          [12, 4, 14, 6],
-          [3, 11, 1, 9],
-          [15, 7, 13, 5]
+          [0, 8, 2, 10], [12, 4, 14, 6],
+          [3, 11, 1, 9], [15, 7, 13, 5]
         ];
         for (let py = 0; py < h; py++) {
           for (let px = 0; px < w; px++) {
@@ -1109,7 +1000,6 @@ function applyFilters(ctx, w, h) {
       }
 
       case 'edge': {
-        // Sobel edge detection
         const copy = new Uint8ClampedArray(data);
         for (let py = 1; py < h - 1; py++) {
           for (let px = 1; px < w - 1; px++) {
@@ -1133,7 +1023,6 @@ function applyFilters(ctx, w, h) {
       }
 
       case 'xray':
-        // High contrast invert
         for (let i = 0; i < len; i += 4) {
           const v = (data[i] + data[i + 1] + data[i + 2]) / 3;
           const inv = 255 - v;
@@ -1143,7 +1032,6 @@ function applyFilters(ctx, w, h) {
         break;
 
       case 'fusion':
-        // Color blend/overlay effect
         for (let i = 0; i < len; i += 4) {
           const r = data[i], g = data[i + 1], b = data[i + 2];
           data[i] = Math.min(255, r * 1.2 + g * 0.1);
@@ -1153,7 +1041,6 @@ function applyFilters(ctx, w, h) {
         break;
 
       case 'mask':
-        // Darken non-blob areas
         if (state.smoothBlobs.length > 0) {
           for (let py = 0; py < h; py++) {
             for (let px = 0; px < w; px++) {
@@ -1175,7 +1062,6 @@ function applyFilters(ctx, w, h) {
         break;
 
       case 'blink':
-        // Flash effect based on time
         if (Math.sin(Date.now() * 0.01) > 0.5) {
           for (let i = 0; i < len; i += 4) {
             data[i] = Math.min(255, data[i] + 80);
@@ -1187,14 +1073,12 @@ function applyFilters(ctx, w, h) {
     }
   }
 
-  // Put pixel-manipulated data back
   ctx.putImageData(imageData, 0, 0);
 
   // Canvas API filters applied on top
   for (const filter of state.filters) {
     switch (filter) {
       case 'blur':
-        // Re-draw with CSS filter blur
         filterCtx.clearRect(0, 0, w, h);
         filterCtx.filter = 'blur(3px)';
         filterCtx.drawImage(canvas, 0, 0);
@@ -1203,7 +1087,6 @@ function applyFilters(ctx, w, h) {
         break;
 
       case 'glitch': {
-        // Horizontal scanline displacement
         const numSlices = 10 + Math.random() * 10;
         for (let i = 0; i < numSlices; i++) {
           const sliceY = Math.random() * h;
@@ -1215,7 +1098,6 @@ function applyFilters(ctx, w, h) {
       }
 
       case 'zoom': {
-        // Slight zoom pulse
         const zf = 1 + 0.03 * Math.sin(Date.now() * 0.005);
         filterCtx.clearRect(0, 0, w, h);
         filterCtx.drawImage(canvas, 0, 0);
@@ -1226,7 +1108,6 @@ function applyFilters(ctx, w, h) {
       }
 
       case 'water': {
-        // Wave distortion
         const t = Date.now() * 0.003;
         filterCtx.clearRect(0, 0, w, h);
         filterCtx.drawImage(canvas, 0, 0);
@@ -1239,12 +1120,10 @@ function applyFilters(ctx, w, h) {
       }
 
       case 'crt': {
-        // Scanline overlay
         ctx.fillStyle = 'rgba(0,0,0,0.08)';
         for (let sy = 0; sy < h; sy += 3) {
           ctx.fillRect(0, sy, w, 1);
         }
-        // Slight vignette
         const vg = ctx.createRadialGradient(w / 2, h / 2, w * 0.3, w / 2, h / 2, w * 0.8);
         vg.addColorStop(0, 'rgba(0,0,0,0)');
         vg.addColorStop(1, 'rgba(0,0,0,0.4)');
@@ -1264,7 +1143,6 @@ function drawConnections(ctx, blobs) {
   if (state.connDash) ctx.setLineDash([5, 5]);
 
   if (state.connMode === 'mesh') {
-    // Connect nearby blobs
     for (let i = 0; i < blobs.length; i++) {
       for (let j = i + 1; j < blobs.length; j++) {
         if (Math.random() > state.connRate) continue;
@@ -1278,7 +1156,6 @@ function drawConnections(ctx, blobs) {
       }
     }
   } else if (state.connMode === 'hub') {
-    // All connect to center (largest) blob
     const hub = blobs[0];
     const hx = hub.x + hub.width / 2, hy = hub.y + hub.height / 2;
     for (let i = 1; i < blobs.length; i++) {
@@ -1303,18 +1180,8 @@ function drawBlobText(ctx, blobs) {
   ctx.textAlign = 'center';
 
   blobs.forEach((b, i) => {
-    let text = '';
-    switch (state.textContent) {
-      case 'random':
-        text = WORDS[i % WORDS.length];
-        break;
-      case 'position':
-        text = `${b.x | 0},${b.y | 0}`;
-        break;
-      case 'count':
-        text = '#' + (i + 1);
-        break;
-    }
+    const text = state.labelText.trim();
+    if (!text) return;
 
     const cx = b.x + b.width / 2;
     let ty;
@@ -1335,87 +1202,9 @@ function drawBlobText(ctx, blobs) {
   ctx.restore();
 }
 
-// ── Audio System ──────────────────────────────────────────────────────
-let lastBeepTime = 0;
-let birdOsc = null;
-
-function setAudio(mode) {
-  state.audioMode = mode;
-
-  // Stop any existing mic stream
-  if (state.micStream) {
-    state.micStream.getTracks().forEach(t => t.stop());
-    state.micStream = null;
-  }
-  if (state.customAudio) {
-    state.customAudio.pause();
-    state.customAudio = null;
-  }
-
-  if (mode === 'computer') {
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-      state.micStream = stream;
-    }).catch(() => {});
-  }
-}
-
-function uploadAudio() {
-  audioInput.click();
-}
-audioInput.addEventListener('change', (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  const audio = new Audio(URL.createObjectURL(file));
-  audio.loop = true;
-  audio.play();
-  state.customAudio = audio;
-});
-
-function triggerAudio(blobs) {
-  if (blobs.length === 0) return;
-
-  if (state.audioMode === 'beep') {
-    const now = Date.now();
-    if (now - lastBeepTime < 200) return;
-    lastBeepTime = now;
-
-    if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = state.audioCtx.createOscillator();
-    const gain = state.audioCtx.createGain();
-    osc.type = 'square';
-    osc.frequency.value = 800 + blobs.length * 50;
-    gain.gain.value = 0.05;
-    osc.connect(gain);
-    gain.connect(state.audioCtx.destination);
-    osc.start();
-    osc.stop(state.audioCtx.currentTime + 0.05);
-  }
-
-  if (state.audioMode === 'bird') {
-    const now = Date.now();
-    if (now - lastBeepTime < 500) return;
-    lastBeepTime = now;
-
-    if (!state.audioCtx) state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = state.audioCtx.createOscillator();
-    const gain = state.audioCtx.createGain();
-    osc.type = 'sine';
-    // Bird chirp: frequency sweep
-    osc.frequency.setValueAtTime(2000 + Math.random() * 1000, state.audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(800, state.audioCtx.currentTime + 0.15);
-    gain.gain.setValueAtTime(0.08, state.audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 0.2);
-    osc.connect(gain);
-    gain.connect(state.audioCtx.destination);
-    osc.start();
-    osc.stop(state.audioCtx.currentTime + 0.2);
-  }
-}
-
 // ── Export Video ───────────────────────────────────────────────────────
 function exportVideo(format) {
   if (state.recording) {
-    // Stop recording
     state.recorder.stop();
     state.recording = false;
     return;
@@ -1441,7 +1230,7 @@ function exportVideo(format) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `babytrack-export.${format === 'mp4' && recorder.mimeType.includes('mp4') ? 'mp4' : 'webm'}`;
+    a.download = `trackr-export.${format === 'mp4' && recorder.mimeType.includes('mp4') ? 'mp4' : 'webm'}`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -1450,7 +1239,6 @@ function exportVideo(format) {
   state.recorder = recorder;
   state.recording = true;
 
-  // Auto-stop after video duration (if video source) or 30s for camera
   if (state.source === 'video' && video.duration && isFinite(video.duration)) {
     setTimeout(() => {
       if (state.recording) {
@@ -1461,7 +1249,7 @@ function exportVideo(format) {
   }
 }
 
-// ── Init: set default active states ───────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────────────
 document.getElementById('connOff').classList.add('active');
 </script>
 </body>
