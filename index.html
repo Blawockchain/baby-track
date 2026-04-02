@@ -13,7 +13,7 @@ html, body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 13px;
 }
-body.dark { background: #0a0a0a; color: #e0e0e0; }
+body.dark { background: #111; color: #e0e0e0; }
 body.light { background: #f0f0f0; color: #1a1a1a; }
 
 /* ── App Layout ───────────────────────────────────────────────────────── */
@@ -21,91 +21,145 @@ body.light { background: #f0f0f0; color: #1a1a1a; }
 
 /* ── Sidebar ──────────────────────────────────────────────────────────── */
 #sidebar {
-  width: 280px; min-width: 280px; max-width: 280px; height: 100vh;
+  width: 320px; min-width: 320px; max-width: 320px; height: 100vh;
   overflow-y: auto; overflow-x: hidden;
   display: flex; flex-direction: column;
   z-index: 10;
+  padding: 6px;
+  gap: 6px;
 }
-body.dark #sidebar { background: #0e0e0e; border-right: 1px solid #1a1a1a; }
+body.dark #sidebar { background: #141414; border-right: 1px solid #222; box-shadow: 2px 0 12px rgba(0,0,0,0.4); }
 body.light #sidebar { background: #e8e8e8; border-right: 1px solid #ccc; }
 #sidebar::-webkit-scrollbar { width: 4px; }
 #sidebar::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
 
+/* ── Cards ────────────────────────────────────────────────────────────── */
+.card {
+  background: #1c1c1c;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+body.light .card { background: #ddd; }
+
 /* ── Sidebar Header ───────────────────────────────────────────────────── */
-.sidebar-header { padding: 10px 12px 0 12px; display: flex; flex-direction: column; gap: 6px; }
 .logo-row { display: flex; align-items: center; justify-content: space-between; }
 .logo {
-  font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
-  font-size: 15px; font-weight: 700;
+  font-family: 'Courier New', 'SF Mono', 'Fira Code', monospace;
+  font-size: 20px; font-weight: 700;
   letter-spacing: 3px;
 }
 body.dark .logo { color: #fff; }
 body.light .logo { color: #111; }
-
-/* ── Controls ─────────────────────────────────────────────────────────── */
-.controls { padding: 8px 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-.section { display: flex; flex-direction: column; gap: 4px; }
-.section-label {
-  font-size: 10px; font-weight: 600;
-  letter-spacing: 1.5px; text-transform: uppercase;
-  padding-bottom: 2px;
-  margin-bottom: 1px;
+.chevron-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: #272727; border: none; color: #aaa;
+  font-size: 14px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center;
+  transition: background 0.15s;
 }
-body.dark .section-label { color: #444; border-bottom: 1px solid #181818; }
-body.light .section-label { color: #aaa; border-bottom: 1px solid #d0d0d0; }
+.chevron-btn:hover { background: #333; }
+.nav-links {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 10px; text-transform: uppercase;
+  letter-spacing: 1px; color: #666;
+}
+.nav-links span { cursor: pointer; transition: color 0.15s; }
+.nav-links span:hover { color: #aaa; }
 
-.btn-row { display: flex; gap: 3px; flex-wrap: wrap; align-items: center; }
+/* ── Notification Card ────────────────────────────────────────────────── */
+.notif-card {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; color: #aaa;
+  padding: 10px 12px;
+}
+.notif-card .notif-arrow { margin-left: auto; color: #666; font-size: 13px; }
+
+/* ── Section Header ───────────────────────────────────────────────────── */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; color: #888;
+}
+.section-header .section-icon { margin-right: 6px; }
+.section-header-left { display: flex; align-items: center; }
+.section-header-right { font-size: 10px; color: #666; }
+.sub-label { font-size: 10px; color: #555; margin-top: -2px; }
+
+/* ── Button Grid ──────────────────────────────────────────────────────── */
+.btn-row { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+.btn-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.btn-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; }
+.btn-row-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px; }
+.btn-full { display: grid; grid-template-columns: 1fr; gap: 4px; }
+
 .btn {
-  padding: 4px 8px; border: none; border-radius: 3px;
-  font-size: 10px; font-weight: 600; cursor: pointer;
+  padding: 8px 12px; border: none; border-radius: 8px;
+  font-size: 11px; font-weight: 500; cursor: pointer;
   transition: all 0.15s; font-family: inherit;
+  text-align: center; position: relative;
 }
-body.dark .btn { background: #1a1a1a; color: #ccc; }
+body.dark .btn { background: #272727; color: #aaa; }
 body.light .btn { background: #d5d5d5; color: #333; }
-.btn:hover { opacity: 0.85; }
-.btn.active { background: #4a4aff; color: #fff; }
-.btn.primary { background: #3a3aee; color: #fff; }
-.btn.primary:hover { background: #5050ff; }
+.btn:hover { background: #333; }
+.btn.active { background: #fff !important; color: #000 !important; font-weight: 700; }
+.btn.primary { background: #272727; color: #aaa; }
+.btn.primary:hover { background: #333; }
 .btn.danger { background: #cc3333; color: #fff; }
+.btn.has-dot::after {
+  content: ''; position: absolute; top: 4px; right: 4px;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #f5a623;
+}
 
 .row-label { font-size: 10px; color: #666; margin-right: 3px; white-space: nowrap; }
 
-input[type="range"] { width: 100%; accent-color: #4a4aff; }
+input[type="range"] {
+  width: 100%; accent-color: #fff;
+  -webkit-appearance: none; appearance: none;
+  height: 4px; background: #333; border-radius: 2px; outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #fff; cursor: pointer;
+}
 input[type="color"] {
-  width: 30px; height: 22px; border: none;
-  border-radius: 3px; cursor: pointer; background: none;
+  width: 30px; height: 28px; border: none;
+  border-radius: 6px; cursor: pointer; background: none;
 }
 input[type="text"].field {
-  padding: 3px 6px; border-radius: 3px; font-size: 11px;
+  padding: 6px 10px; border-radius: 8px; font-size: 11px;
   font-family: inherit; width: 100%;
 }
-body.dark input[type="text"].field { background: #1a1a1a; color: #ccc; border: 1px solid #333; }
+body.dark input[type="text"].field { background: #272727; color: #ccc; border: 1px solid #333; }
 body.light input[type="text"].field { background: #ddd; color: #333; border: 1px solid #bbb; }
 
 .toggle-row {
-  display: flex; align-items: center; gap: 6px; font-size: 10px;
+  display: flex; align-items: center; gap: 6px; font-size: 11px; color: #aaa;
 }
-.toggle-row input[type="checkbox"] { accent-color: #4a4aff; }
+.toggle-row input[type="checkbox"] { accent-color: #fff; }
 
 select {
-  padding: 3px 6px; border-radius: 3px; font-size: 10px;
+  padding: 6px 10px; border-radius: 8px; font-size: 11px;
   font-family: inherit; cursor: pointer;
 }
-body.dark select { background: #1a1a1a; color: #ccc; border: 1px solid #333; }
+body.dark select { background: #272727; color: #aaa; border: 1px solid #333; }
 body.light select { background: #ddd; color: #333; border: 1px solid #bbb; }
 
 .slider-row {
-  display: flex; align-items: center; gap: 6px; font-size: 10px;
+  display: flex; align-items: center; gap: 8px; font-size: 11px;
 }
 .slider-row input[type="range"] { flex: 1; }
-.slider-row .slider-val { min-width: 28px; text-align: right; color: #888; font-size: 10px; }
+.slider-row .slider-val { min-width: 28px; text-align: right; color: #666; font-size: 11px; }
 
 /* ── Main Area ────────────────────────────────────────────────────────── */
 #main {
   flex: 1; display: flex; align-items: center; justify-content: center;
   position: relative; overflow: hidden;
 }
-body.dark #main { background: #050505; }
+body.dark #main { background: #0a0a0a; }
 body.light #main { background: #e0e0e0; }
 
 #display-canvas {
@@ -116,8 +170,8 @@ body.light #main { background: #e0e0e0; }
   text-align: center; color: #444; font-size: 14px;
 }
 #placeholder h2 {
-  font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
-  font-size: 18px; margin-bottom: 8px; color: #666;
+  font-family: 'Courier New', 'SF Mono', 'Fira Code', monospace;
+  font-size: 20px; margin-bottom: 8px; color: #666;
   letter-spacing: 3px;
 }
 
@@ -130,212 +184,261 @@ video, #offscreen, #filterCanvas { display: none; }
 <div id="app">
 <!-- ── Sidebar ──────────────────────────────────────────────────────── -->
 <div id="sidebar">
-  <div class="sidebar-header">
+
+  <!-- HEADER CARD -->
+  <div class="card">
     <div class="logo-row">
       <span class="logo">TRACKR</span>
-      <button class="btn" onclick="toggleTheme()" style="font-size:10px;">Theme</button>
+      <button class="chevron-btn" onclick="toggleTheme()">&#8597;</button>
+    </div>
+    <div class="nav-links">
+      <span>&#127769; </span>
+      <span>MEMBERSHIP</span>
+      <span>CONTACT</span>
+      <span>&#9432; TIPS</span>
     </div>
   </div>
 
-  <div class="controls">
-    <!-- VIDEO -->
-    <div class="section">
-      <div class="section-label">Video</div>
-      <div class="btn-row">
-        <button class="btn primary" onclick="uploadVideo()">Upload</button>
-        <button class="btn primary" onclick="openCamera()">Camera</button>
-      </div>
-      <div class="btn-row">
-        <span class="row-label">Speed:</span>
-        <button class="btn active" onclick="setSpeed(1,this)">1x</button>
-        <button class="btn" onclick="setSpeed(2,this)">2x</button>
-        <button class="btn" onclick="setSpeed(3,this)">3x</button>
-        <button class="btn" onclick="setSpeed(4,this)">4x</button>
-      </div>
-      <div class="slider-row">
-        <span class="row-label">Skip:</span>
-        <input type="range" id="perfSlider" min="0" max="4" value="0"
-          oninput="state.frameSkip=+this.value; this.nextElementSibling.textContent=this.value==0?'0':this.value">
-        <span class="slider-val">0</span>
-      </div>
-    </div>
+  <!-- NOTIFICATION CARD -->
+  <div class="card notif-card">
+    <span>&#128276;</span>
+    <span>Try ImageTrack (Image Version)</span>
+    <span class="notif-arrow">&#8599;</span>
+  </div>
 
-    <!-- TRACKING -->
-    <div class="section">
-      <div class="section-label">Tracking</div>
-      <div class="slider-row">
-        <span class="row-label">Min Size:</span>
-        <input type="range" id="minSizeSlider" min="200" max="5000" value="1200"
-          oninput="state.minBlobArea=+this.value; this.nextElementSibling.textContent=this.value">
-        <span class="slider-val">1200</span>
-      </div>
-      <div class="btn-row">
-        <span class="row-label">Max:</span>
-        <button class="btn" onclick="setMaxBlobs(3,this)">3</button>
-        <button class="btn active" onclick="setMaxBlobs(8,this)">8</button>
-        <button class="btn" onclick="setMaxBlobs(15,this)">15</button>
-        <button class="btn" onclick="setMaxBlobs(30,this)">30</button>
-      </div>
-      <div class="toggle-row">
-        <input type="checkbox" id="singleTrack" onchange="state.singleTracking=this.checked">
-        <label for="singleTrack">Single Tracking</label>
-      </div>
-      <div class="toggle-row">
-        <input type="checkbox" id="sameSize" onchange="state.sameSize=this.checked">
-        <label for="sameSize">Same Size</label>
-      </div>
+  <!-- VIDEO ACTIONS CARD -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-header-left"><span class="section-icon">&#9654;</span> Video</div>
     </div>
-
-    <!-- AUDIO -->
-    <div class="section">
-      <div class="section-label">Audio</div>
-      <div class="btn-row">
-        <span class="row-label">Sound:</span>
-        <button class="btn active" onclick="setAudio('none',this)">None</button>
-        <button class="btn" onclick="setAudio('beep',this)">Beep</button>
-        <button class="btn" onclick="setAudio('bird',this)">Bird</button>
-      </div>
+    <div class="btn-row-2">
+      <button class="btn primary" onclick="uploadVideo()">&#8593; Upload Video</button>
+      <button class="btn primary" onclick="openCamera()">&#128247; Open Camera</button>
     </div>
+    <div class="btn-row-2">
+      <button class="btn" onclick="exportVideo('mp4')">&#8595; Export MP4</button>
+      <button class="btn" onclick="exportVideo('webm')">&#8595; Export WebM</button>
+    </div>
+    <div class="btn-full">
+      <button class="btn has-dot" onclick="document.getElementById('hqExport').checked=true;exportVideo('mp4')" id="hqExportBtn">&#8595; High-Quality Export</button>
+      <input type="checkbox" id="hqExport" class="hidden" checked>
+    </div>
+  </div>
 
-    <!-- DISPLAY -->
-    <div class="section">
-      <div class="section-label">Display</div>
-      <div class="btn-row">
-        <span class="row-label">Shape:</span>
-        <button class="btn active" onclick="setShape('square',this)">&#9633;</button>
-        <button class="btn" onclick="setShape('circle',this)">&#9675;</button>
-        <button class="btn" onclick="setShape('rounded',this)">&#9645;</button>
-      </div>
-      <div class="btn-row">
-        <span class="row-label">Region:</span>
-        <select id="regionSelect" onchange="state.region=this.value">
+  <!-- VIDEO SPEED CARD -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-header-left"><span class="section-icon">&#9655;&#9655;</span> Video Speed</div>
+    </div>
+    <div class="btn-row-4">
+      <button class="btn active" onclick="setSpeed(1,this)">1X</button>
+      <button class="btn" onclick="setSpeed(2,this)">2X</button>
+      <button class="btn" onclick="setSpeed(3,this)">3X</button>
+      <button class="btn" onclick="setSpeed(4,this)">4X</button>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE CARD -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-header-left"><span class="section-icon">&#9889;</span> Performance &#9432;</div>
+      <div class="section-header-right">No Skip</div>
+    </div>
+    <div class="slider-row">
+      <input type="range" id="perfSlider" min="0" max="4" value="0"
+        oninput="state.frameSkip=+this.value; this.nextElementSibling.textContent=this.value==0?'0':this.value">
+      <span class="slider-val">0</span>
+    </div>
+  </div>
+
+  <!-- TRACKING CARD -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-header-left"><span class="section-icon">&#9678;</span> Tracking</div>
+    </div>
+    <div class="slider-row">
+      <span class="row-label">Min Size:</span>
+      <input type="range" id="minSizeSlider" min="200" max="5000" value="1200"
+        oninput="state.minBlobArea=+this.value; this.nextElementSibling.textContent=this.value">
+      <span class="slider-val">1200</span>
+    </div>
+    <div class="btn-row-4">
+      <button class="btn" onclick="setMaxBlobs(3,this)">3</button>
+      <button class="btn active" onclick="setMaxBlobs(8,this)">8</button>
+      <button class="btn" onclick="setMaxBlobs(15,this)">15</button>
+      <button class="btn" onclick="setMaxBlobs(30,this)">30</button>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="singleTrack" onchange="state.singleTracking=this.checked">
+      <label for="singleTrack">Single Tracking</label>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="sameSize" onchange="state.sameSize=this.checked">
+      <label for="sameSize">Same Size</label>
+    </div>
+  </div>
+
+  <!-- SHAPE CARD -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-header-left"><span class="section-icon">&#9884;</span> Shape</div>
+    </div>
+    <div class="btn-row-3">
+      <button class="btn active has-dot" onclick="setShape('square',this)">&#9633;</button>
+      <button class="btn" onclick="setShape('circle',this)">&#9675;</button>
+      <button class="btn has-dot" onclick="setShape('rounded',this)">&#9645;</button>
+    </div>
+  </div>
+
+  <!-- REGION STYLE CARD -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-header-left"><span class="section-icon">&#10024;</span> Region Style</div>
+      <div class="section-header-right">
+        <select id="regionSelect" onchange="state.region=this.value" style="font-size:10px;padding:3px 6px;border-radius:6px;">
           <option value="box">Box</option>
           <option value="fill">Fill</option>
           <option value="outline">Outline</option>
         </select>
       </div>
-      <div class="btn-row">
-        <input type="color" id="colorPicker" value="#00ff88" onchange="state.color=this.value">
-        <div class="toggle-row">
-          <input type="checkbox" id="sepColors" onchange="state.separateColors=this.checked">
-          <label for="sepColors">Separate</label>
-        </div>
-        <div class="toggle-row">
-          <input type="checkbox" id="crazyColors" onchange="state.crazy=this.checked">
-          <label for="crazyColors">Crazy</label>
-        </div>
-      </div>
-      <div class="toggle-row">
-        <input type="checkbox" id="textToggle" onchange="state.showText=this.checked">
-        <label for="textToggle">Text</label>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:3px;">
-        <span class="row-label">Label:</span>
-        <input type="text" class="field" id="labelField" placeholder="(empty = no label)" oninput="state.labelText=this.value">
-      </div>
-      <div class="btn-row">
-        <span class="row-label">Font:</span>
-        <button class="btn" onclick="setFont(10,this)">10</button>
-        <button class="btn active" onclick="setFont(12,this)">12</button>
-        <button class="btn" onclick="setFont(16,this)">16</button>
-        <button class="btn" onclick="setFont(20,this)">20</button>
-      </div>
-      <div class="btn-row">
-        <span class="row-label">Pos:</span>
-        <select id="textPos" onchange="state.textPosition=this.value">
-          <option value="center">Center</option>
-          <option value="top">Top</option>
-          <option value="bottom">Bottom</option>
-        </select>
-      </div>
     </div>
-
-    <!-- EFFECTS -->
-    <div class="section">
-      <div class="section-label">Effects</div>
-      <div class="btn-row">
-        <button class="btn active" onclick="setEffect('basic',this)">Basic</button>
-        <button class="btn" onclick="setEffect('label',this)">Label</button>
-        <button class="btn" onclick="setEffect('frame',this)">Frame</button>
-        <button class="btn" onclick="setEffect('lframe',this)">L-Frame</button>
-        <button class="btn" onclick="setEffect('xframe',this)">X-Frame</button>
-      </div>
-      <div class="btn-row">
-        <button class="btn" onclick="setEffect('grid',this)">Grid</button>
-        <button class="btn" onclick="setEffect('particle',this)">Particle</button>
-        <button class="btn" onclick="setEffect('dash',this)">Dash</button>
-        <button class="btn" onclick="setEffect('scope',this)">Scope</button>
-        <button class="btn" onclick="setEffect('glow',this)">Glow</button>
-      </div>
-      <div class="btn-row">
-        <button class="btn" onclick="setEffect('backdrop',this)">Backdrop</button>
-        <button class="btn" onclick="setEffect('win2k',this)">Win2K</button>
-        <button class="btn" onclick="setEffect('label2',this)">Label2</button>
-      </div>
-
-      <div class="btn-row" style="margin-top:4px;">
-        <span class="row-label">Filters:</span>
-      </div>
-      <div class="btn-row">
-        <button class="btn" onclick="toggleFilter('invert',this)">Invert</button>
-        <button class="btn" onclick="toggleFilter('fusion',this)">Fusion</button>
-        <button class="btn" onclick="toggleFilter('glitch',this)">Glitch</button>
-        <button class="btn" onclick="toggleFilter('thermal',this)">Thermal</button>
-        <button class="btn" onclick="toggleFilter('pixel',this)">Pixel</button>
-      </div>
-      <div class="btn-row">
-        <button class="btn" onclick="toggleFilter('tone',this)">Tone</button>
-        <button class="btn" onclick="toggleFilter('blur',this)">Blur</button>
-        <button class="btn" onclick="toggleFilter('dither',this)">Dither</button>
-        <button class="btn" onclick="toggleFilter('zoom',this)">Zoom</button>
-        <button class="btn" onclick="toggleFilter('xray',this)">X-Ray</button>
-      </div>
-      <div class="btn-row">
-        <button class="btn" onclick="toggleFilter('water',this)">Water</button>
-        <button class="btn" onclick="toggleFilter('mask',this)">Mask</button>
-        <button class="btn" onclick="toggleFilter('crt',this)">CRT</button>
-        <button class="btn" onclick="toggleFilter('edge',this)">Edge</button>
-        <button class="btn" onclick="toggleFilter('blink',this)">Blink</button>
-      </div>
-      <div class="btn-row">
-        <button class="btn" onclick="toggleFilter('inv',this)">Inv</button>
-      </div>
-
-      <div class="btn-row" style="margin-top:4px;">
-        <span class="row-label">Connect:</span>
-        <button class="btn active" id="connOff" onclick="setConn('off',this)">Off</button>
-        <button class="btn" id="connMesh" onclick="setConn('mesh',this)">Mesh</button>
-        <button class="btn" id="connHub" onclick="setConn('hub',this)">Hub</button>
-      </div>
-      <div class="btn-row">
-        <span class="row-label">Line:</span>
-        <button class="btn active" onclick="state.connDash=false;activate(this)">Solid</button>
-        <button class="btn" onclick="state.connDash=true;activate(this)">Dashed</button>
-        <span class="row-label" style="margin-left:4px;">W:</span>
-        <button class="btn active" onclick="state.connWidth=1;activate(this)">1</button>
-        <button class="btn" onclick="state.connWidth=2;activate(this)">2</button>
-        <button class="btn" onclick="state.connWidth=3;activate(this)">3</button>
-      </div>
-      <div class="slider-row">
-        <span class="row-label">Rate:</span>
-        <input type="range" min="0" max="100" value="50"
-          oninput="state.connRate=this.value/100; this.nextElementSibling.textContent=(this.value/100).toFixed(2)">
-        <span class="slider-val">0.50</span>
-      </div>
+    <div class="sub-label">Basic Effects</div>
+    <div class="btn-row-3">
+      <button class="btn active" onclick="setEffect('basic',this)">Basic</button>
+      <button class="btn" onclick="setEffect('label',this)">Label</button>
+      <button class="btn" onclick="setEffect('frame',this)">Frame</button>
     </div>
-
-    <!-- EXPORT -->
-    <div class="section">
-      <div class="section-label">Export</div>
-      <div class="btn-row">
-        <button class="btn primary" onclick="exportVideo('mp4')">MP4</button>
-        <button class="btn primary" onclick="exportVideo('webm')">WebM</button>
-        <div class="toggle-row" style="margin-left:4px;">
-          <input type="checkbox" id="hqExport"><label for="hqExport">HQ</label>
-        </div>
-      </div>
+    <div class="btn-row-3">
+      <button class="btn" onclick="setEffect('lframe',this)">L-Frame</button>
+      <button class="btn" onclick="setEffect('xframe',this)">X-Frame</button>
+      <button class="btn" onclick="setEffect('grid',this)">Grid</button>
+    </div>
+    <div class="btn-row-3">
+      <button class="btn" onclick="setEffect('particle',this)">Particle</button>
+      <button class="btn" onclick="setEffect('dash',this)">Dash</button>
+      <button class="btn" onclick="setEffect('scope',this)">Scope</button>
+    </div>
+    <div class="btn-row-3">
+      <button class="btn" onclick="setEffect('win2k',this)">Win2K</button>
+      <button class="btn" onclick="setEffect('glow',this)">Glow</button>
+      <button class="btn" onclick="setEffect('backdrop',this)">Backdrop</button>
+    </div>
+    <div class="btn-row-3">
+      <button class="btn" onclick="setEffect('label2',this)">Label2</button>
     </div>
   </div>
+
+  <!-- FILTER EFFECTS CARD -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-header-left"><span class="section-icon">&#9881;</span> Filter Effects</div>
+    </div>
+    <div class="btn-row-3">
+      <button class="btn" onclick="toggleFilter('invert',this)">Invert</button>
+      <button class="btn" onclick="toggleFilter('fusion',this)">Fusion</button>
+      <button class="btn" onclick="toggleFilter('glitch',this)">Glitch</button>
+    </div>
+    <div class="btn-row-3">
+      <button class="btn" onclick="toggleFilter('thermal',this)">Thermal</button>
+      <button class="btn" onclick="toggleFilter('pixel',this)">Pixel</button>
+      <button class="btn" onclick="toggleFilter('tone',this)">Tone</button>
+    </div>
+    <div class="btn-row-3">
+      <button class="btn" onclick="toggleFilter('blur',this)">Blur</button>
+      <button class="btn" onclick="toggleFilter('dither',this)">Dither</button>
+      <button class="btn" onclick="toggleFilter('zoom',this)">Zoom</button>
+    </div>
+    <div class="btn-row-3">
+      <button class="btn" onclick="toggleFilter('xray',this)">X-Ray</button>
+      <button class="btn" onclick="toggleFilter('water',this)">Water</button>
+      <button class="btn" onclick="toggleFilter('mask',this)">Mask</button>
+    </div>
+    <div class="btn-row-3">
+      <button class="btn" onclick="toggleFilter('crt',this)">CRT</button>
+      <button class="btn" onclick="toggleFilter('edge',this)">Edge</button>
+      <button class="btn" onclick="toggleFilter('blink',this)">Blink</button>
+    </div>
+    <div class="btn-row-3">
+      <button class="btn" onclick="toggleFilter('inv',this)">Inv</button>
+    </div>
+  </div>
+
+  <!-- CONNECTIONS CARD -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-header-left"><span class="section-icon">&#128279;</span> Connections</div>
+    </div>
+    <div class="btn-row-3">
+      <button class="btn active" id="connOff" onclick="setConn('off',this)">Off</button>
+      <button class="btn" id="connMesh" onclick="setConn('mesh',this)">Mesh</button>
+      <button class="btn" id="connHub" onclick="setConn('hub',this)">Hub</button>
+    </div>
+    <div class="btn-row">
+      <span class="row-label">Line:</span>
+      <button class="btn active" onclick="state.connDash=false;activate(this)">Solid</button>
+      <button class="btn" onclick="state.connDash=true;activate(this)">Dashed</button>
+      <span class="row-label" style="margin-left:4px;">W:</span>
+      <button class="btn active" onclick="state.connWidth=1;activate(this)">1</button>
+      <button class="btn" onclick="state.connWidth=2;activate(this)">2</button>
+      <button class="btn" onclick="state.connWidth=3;activate(this)">3</button>
+    </div>
+    <div class="slider-row">
+      <span class="row-label">Rate:</span>
+      <input type="range" min="0" max="100" value="50"
+        oninput="state.connRate=this.value/100; this.nextElementSibling.textContent=(this.value/100).toFixed(2)">
+      <span class="slider-val">0.50</span>
+    </div>
+  </div>
+
+  <!-- COLOR & TEXT CARD -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-header-left"><span class="section-icon">&#127912;</span> Color &amp; Text</div>
+    </div>
+    <div class="btn-row" style="align-items:center;">
+      <input type="color" id="colorPicker" value="#00ff88" onchange="state.color=this.value">
+      <div class="toggle-row">
+        <input type="checkbox" id="sepColors" onchange="state.separateColors=this.checked">
+        <label for="sepColors">Separate</label>
+      </div>
+      <div class="toggle-row">
+        <input type="checkbox" id="crazyColors" onchange="state.crazy=this.checked">
+        <label for="crazyColors">Crazy</label>
+      </div>
+    </div>
+    <div class="toggle-row">
+      <input type="checkbox" id="textToggle" onchange="state.showText=this.checked">
+      <label for="textToggle">Show Text</label>
+    </div>
+    <input type="text" class="field" id="labelField" placeholder="Label text (empty = no label)" oninput="state.labelText=this.value">
+    <div class="btn-row-4">
+      <button class="btn" onclick="setFont(10,this)">10</button>
+      <button class="btn active" onclick="setFont(12,this)">12</button>
+      <button class="btn" onclick="setFont(16,this)">16</button>
+      <button class="btn" onclick="setFont(20,this)">20</button>
+    </div>
+    <div class="btn-row" style="align-items:center;">
+      <span class="row-label">Pos:</span>
+      <select id="textPos" onchange="state.textPosition=this.value">
+        <option value="center">Center</option>
+        <option value="top">Top</option>
+        <option value="bottom">Bottom</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- AUDIO CARD -->
+  <div class="card">
+    <div class="section-header">
+      <div class="section-header-left"><span class="section-icon">&#127925;</span> Audio</div>
+    </div>
+    <div class="btn-row-3">
+      <button class="btn active" onclick="setAudio('none',this)">None</button>
+      <button class="btn" onclick="setAudio('beep',this)">Beep</button>
+      <button class="btn" onclick="setAudio('bird',this)">Bird</button>
+    </div>
+  </div>
+
 </div>
 
 <!-- ── Main Area ────────────────────────────────────────────────────── -->
@@ -458,14 +561,11 @@ function setShape(s, btn) { state.shape = s; activate(btn); }
 
 function setEffect(e, btn) {
   state.effect = e;
-  document.querySelectorAll('.section').forEach(sec => {
-    if (sec.querySelector('.section-label')?.textContent === 'Effects') {
-      // Only deactivate the first two btn-rows (effect buttons, not filters)
-      const rows = sec.querySelectorAll('.btn-row');
-      rows[0]?.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-      rows[1]?.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
-    }
-  });
+  // Deactivate all effect buttons in the Region Style card (btn's parent card)
+  const card = btn.closest('.card');
+  if (card) {
+    card.querySelectorAll('.btn-row-3 .btn').forEach(b => b.classList.remove('active'));
+  }
   btn.classList.add('active');
 }
 
